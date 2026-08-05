@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       EDIT THESE FOUR LINES FOR EVERY NEW ARTICLE
+       ═══════════════════════════════════════════════════════════ -->
+  <title>[Article Title] — Qasim Mushtaq</title>
+  <meta name="description" content="One-sentence summary of the article — this shows up in search results and link previews. Keep it under ~155 characters." />
+  <meta property="og:title" content="[Article Title]" />
+  <meta property="og:description" content="Same summary as the meta description above." />
+  <!-- ═══════════════════════════════════════════════════════════ -->
+
+  <meta property="og:type" content="article" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23060E1F'/%3E%3Ctext x='50' y='68' font-size='58' font-family='Georgia,serif' font-weight='bold' fill='%2360A5FA' text-anchor='middle'%3EQ%3C/text%3E%3C/svg%3E" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Mono:wght@400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet"/>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --navy:   #060E1F;
+      --navy2:  #0B1829;
+      --navy3:  #0F2240;
+      --glow:   #60A5FA;
+      --ice:    #BAE6FD;
+      --white:  #F0F6FF;
+      --grey:   #94A3B8;
+      --text:   #ABBACD;
+      --dgrey:  #334155;
+      --accent: #F59E0B;
+      --green:  #10B981;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--navy);
+      color: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      line-height: 1.5;
+    }
+
+    .topbar {
+      max-width: 760px; margin: 0 auto;
+      padding: 32px 24px 0;
+    }
+    .back-link {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.8rem; letter-spacing: 0.05em;
+      color: var(--grey); text-decoration: none;
+    }
+    .back-link:hover { color: var(--glow); }
+
+    article {
+      max-width: 760px; margin: 0 auto;
+      padding: 40px 24px 100px;
+    }
+
+    .article-tag {
+      display: inline-block;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--glow);
+      border: 1px solid rgba(96,165,250,0.3);
+      padding: 5px 12px;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: clamp(1.8rem, 4vw, 2.6rem);
+      line-height: 1.15;
+      margin-bottom: 16px;
+    }
+
+    .dek {
+      font-size: 1.1rem;
+      color: var(--text);
+      max-width: 620px;
+      margin-bottom: 20px;
+    }
+
+    .meta-line {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.78rem;
+      color: var(--grey);
+      margin-bottom: 44px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid rgba(96,165,250,0.12);
+    }
+
+    article h2 {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 1.4rem;
+      margin: 44px 0 16px;
+    }
+    article h3 {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--ice);
+      margin: 32px 0 12px;
+    }
+    article p {
+      font-size: 1rem;
+      color: var(--text);
+      margin-bottom: 18px;
+    }
+    article ul, article ol {
+      color: var(--text);
+      margin: 0 0 18px 22px;
+    }
+    article li { margin-bottom: 8px; }
+    article strong { color: var(--white); font-weight: 500; }
+    article a { color: var(--glow); }
+
+    pre {
+      background: var(--navy2);
+      border: 1px solid rgba(96,165,250,0.15);
+      border-left: 3px solid var(--glow);
+      padding: 20px;
+      overflow-x: auto;
+      margin: 24px 0;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.85rem;
+      line-height: 1.6;
+      color: var(--ice);
+    }
+    code {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.88em;
+      background: var(--navy2);
+      padding: 2px 6px;
+      color: var(--ice);
+    }
+    pre code { background: none; padding: 0; }
+
+    .callout {
+      background: var(--navy2);
+      border-left: 3px solid var(--accent);
+      padding: 16px 20px;
+      margin: 24px 0;
+      font-size: 0.92rem;
+      color: var(--text);
+    }
+    .callout strong { color: var(--accent); }
+
+    figure { margin: 28px 0; }
+    figure img { width: 100%; display: block; border: 1px solid rgba(96,165,250,0.15); }
+    figcaption {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--grey);
+      margin-top: 8px;
+      text-align: center;
+    }
+
+    .author-box {
+      margin-top: 60px;
+      padding: 28px;
+      background: var(--navy2);
+      border: 1px solid rgba(96,165,250,0.1);
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .author-box .name {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700; font-size: 1rem;
+    }
+    .author-box p {
+      font-size: 0.88rem; color: var(--text); margin: 0;
+    }
+    .author-links {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.8rem;
+    }
+    .author-links a { color: var(--glow); margin-right: 16px; text-decoration: none; }
+    .author-links a:hover { text-decoration: underline; }
+
+    @media (max-width: 600px) {
+      article { padding: 32px 20px 80px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <a href="../index.html#writing" class="back-link">&larr; back to cassimhossain.github.io</a>
+  </div>
+
+  <article>
+
+    <span class="article-tag">[Category — e.g. Robotics &middot; Embedded Systems]</span>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         TITLE + DEK
+         The dek is one sentence: what this is and why someone should
+         read it. Write it like you're explaining the project to
+         another engineer at a meetup, not like ad copy.
+         ═══════════════════════════════════════════════════════════ -->
+    <h1>[Article Title]</h1>
+    <p class="dek">
+      [One sentence: what this piece covers and why it's worth the reader's time.]
+    </p>
+
+    <div class="meta-line">
+      Qasim Mushtaq &nbsp;&middot;&nbsp; <span id="pub-date">Month Day, 2026</span> &nbsp;&middot;&nbsp; ~8 min read
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         BODY — suggested structure for a hardware/tutorial piece.
+         Delete these instructional notes as you write; keep the
+         h2 headings as a skeleton, or change them to your own.
+         ═══════════════════════════════════════════════════════════ -->
+
+    <h2>The problem</h2>
+    <p>
+      One or two paragraphs: what were you trying to build, and why
+      does obstacle-avoidance/path-following matter as a problem?
+      What's the real constraint — cost, part availability, response
+      time — that made this non-trivial? Ground it in something
+      specific (a classroom demo, a competition, a personal project),
+      not generic robotics-tutorial framing.
+    </p>
+
+    <h2>Hardware</h2>
+    <p>
+      What you used and why you chose it over alternatives. A reader
+      should be able to source the same parts.
+    </p>
+    <ul>
+      <li>Microcontroller: Arduino / ESP32 — which, and why</li>
+      <li>Sensors: ultrasonic module(s), placement, and field of view</li>
+      <li>Motor driver, chassis, power — whatever's relevant</li>
+    </ul>
+    <figure>
+      <!-- Swap in a real photo of your build once you have one -->
+      <!-- <img src="images/rig.jpg" alt="Wiring diagram of the navigation vehicle"> -->
+      <figcaption>[ photo or wiring diagram of the build ]</figcaption>
+    </figure>
+
+    <h2>The control loop</h2>
+    <p>
+      This is the section that separates a real technical piece from
+      a shopping list. Explain the actual PID logic: what error signal
+      you're feeding it, how you tuned Kp/Ki/Kd, and what happened
+      when the tuning was wrong before it was right. Show real
+      numbers if you have them.
+    </p>
+
+    <pre><code>// Paste your actual, working code here.
+// Trim it to the part that matters — the full PID loop,
+// not the entire sketch. Link the full repo separately.
+
+float error = targetDistance - currentDistance;
+integral += error;
+float derivative = error - lastError;
+float output = Kp * error + Ki * integral + Kd * derivative;
+</code></pre>
+
+    <div class="callout">
+      <strong>What went wrong first:</strong> readers trust a piece
+      more when you show a real failure mode — oscillation from Kd
+      being too low, sensor noise near walls, whatever actually broke
+      on your bench. Put it here.
+    </div>
+
+    <h2>Results</h2>
+    <p>
+      What did it actually do? Numbers beat adjectives — response
+      time, success rate over N trials, distance accuracy. If you
+      have a video or GIF of it running, this is where it goes.
+    </p>
+
+    <h2>What I'd do differently</h2>
+    <p>
+      One or two honest notes on the next iteration — a better sensor,
+      a state machine instead of pure PID for sharp turns, whatever
+      you'd actually change. This is the paragraph editors and
+      hiring managers read most closely, because it shows judgment,
+      not just execution.
+    </p>
+
+    <p>
+      Full code: <a href="https://github.com/cassimhossain" target="_blank">github.com/cassimhossain</a>
+    </p>
+
+    <div class="author-box">
+      <div class="name">Qasim Mushtaq</div>
+      <p>Mechanical/robotics engineer (NUST) completing an MSc in Robotics &amp; AI. I build the hardware I write about.</p>
+      <div class="author-links">
+        <a href="../index.html">Portfolio</a>
+        <a href="https://linkedin.com/in/qasimushtaq" target="_blank">LinkedIn</a>
+        <a href="mailto:cassimhossain@gmail.com">Email</a>
+      </div>
+    </div>
+
+  </article>
+
+</body>
+</html>

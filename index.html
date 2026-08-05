@@ -3,8 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Qasim Mushtaq — AI Engineer & Founder, Karakoram AI</title>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <title>Qasim Mushtaq — Robotics & AI Engineer, Educator, Technical Writer</title>
+  <meta name="description" content="Qasim Mushtaq — mechanical & robotics engineer (NUST) building practical AI tools, training 500+ people in AI and robotics across Pakistan, and writing technical documentation on robotics, embedded systems, and AI." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://cassimhossain.github.io/" />
+  <meta property="og:title" content="Qasim Mushtaq — Robotics & AI Engineer, Educator, Technical Writer" />
+  <meta property="og:description" content="Mechanical/robotics engineer (NUST) building practical AI tools, training 500+ people in AI and robotics across Pakistan, and writing technical documentation." />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Qasim Mushtaq — Robotics & AI Engineer, Educator, Technical Writer" />
+  <meta name="twitter:description" content="Mechanical/robotics engineer (NUST) building practical AI tools and writing technical documentation on robotics, embedded systems, and AI." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23060E1F'/%3E%3Ctext x='50' y='68' font-size='58' font-family='Georgia,serif' font-weight='bold' fill='%2360A5FA' text-anchor='middle'%3EQ%3C/text%3E%3C/svg%3E" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Mono:wght@400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -18,6 +27,7 @@
       --ice:    #BAE6FD;
       --white:  #F0F6FF;
       --grey:   #94A3B8;
+      --text:   #ABBACD;
       --dgrey:  #334155;
       --accent: #F59E0B;
       --green:  #10B981;
@@ -30,10 +40,12 @@
       color: var(--white);
       font-family: 'DM Sans', sans-serif;
       overflow-x: hidden;
-      cursor: none;
     }
 
-    /* Custom cursor */
+    /* Custom cursor — desktop/mouse only, never hides the real cursor on touch */
+    @media (pointer: fine) {
+      body { cursor: none; }
+    }
     .cursor {
       width: 8px; height: 8px;
       background: var(--glow);
@@ -51,6 +63,9 @@
       pointer-events: none;
       z-index: 9998;
       transition: transform 0.15s ease, width 0.2s, height 0.2s, border-color 0.2s;
+    }
+    @media (pointer: coarse) {
+      .cursor, .cursor-ring { display: none; }
     }
 
     /* ── NOISE OVERLAY ─────────────────────────── */
@@ -149,7 +164,7 @@
       max-width: 560px;
       font-size: 1.05rem;
       line-height: 1.75;
-      color: var(--grey);
+      color: var(--text);
       opacity: 0; animation: fadeUp 0.8s 0.5s forwards;
     }
     .hero-sub strong { color: var(--white); font-weight: 500; }
@@ -240,7 +255,7 @@
     }
     .about-text p {
       font-size: 1rem; line-height: 1.8;
-      color: var(--grey); margin-bottom: 20px;
+      color: var(--text); margin-bottom: 20px;
     }
     .about-text p strong { color: var(--white); font-weight: 500; }
     .about-text p .highlight {
@@ -360,7 +375,7 @@
     }
     .project-desc {
       font-size: 0.9rem; line-height: 1.7;
-      color: var(--grey); margin-bottom: 20px;
+      color: var(--text); margin-bottom: 20px;
     }
     .project-stack {
       display: flex; flex-wrap: wrap; gap: 6px;
@@ -415,7 +430,7 @@
     }
     .exp-desc {
       font-size: 0.88rem; line-height: 1.7;
-      color: var(--grey);
+      color: var(--text);
     }
     .exp-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
     .exp-tag {
@@ -424,36 +439,6 @@
       color: var(--dgrey);
       padding: 3px 8px;
       border: 1px solid var(--dgrey);
-    }
-
-    /* ── SERVICES ──────────────────────────────── */
-    .services-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
-    }
-    .service-card {
-      background: var(--navy2);
-      border: 1px solid rgba(96,165,250,0.08);
-      padding: 28px;
-      transition: border-color 0.25s, transform 0.2s;
-      clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%);
-    }
-    .service-card:hover { border-color: rgba(96,165,250,0.3); transform: translateY(-3px); }
-    .service-num {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.65rem; letter-spacing: 0.15em;
-      color: rgba(96,165,250,0.4);
-      margin-bottom: 16px;
-    }
-    .service-title {
-      font-family: 'Syne', sans-serif;
-      font-size: 1rem; font-weight: 700;
-      margin-bottom: 10px; line-height: 1.3;
-    }
-    .service-desc {
-      font-size: 0.83rem; line-height: 1.65;
-      color: var(--grey);
     }
 
     /* ── CONTACT ───────────────────────────────── */
@@ -466,7 +451,7 @@
     }
     .contact-inner h2 { margin-bottom: 16px; }
     .contact-inner p {
-      font-size: 1rem; color: var(--grey);
+      font-size: 1rem; color: var(--text);
       max-width: 480px; margin: 0 auto 40px;
       line-height: 1.7;
     }
@@ -519,7 +504,6 @@
       .about-grid { grid-template-columns: 1fr; }
       .project-card.featured { grid-template-columns: 1fr; }
       .exp-item { grid-template-columns: 1fr; gap: 8px; }
-      .services-grid { grid-template-columns: 1fr; }
       .contact-inner { padding: 40px 24px; }
       footer { flex-direction: column; gap: 12px; text-align: center; }
     }
@@ -540,26 +524,26 @@
 
   <!-- Nav -->
   <nav>
-    <a href="#" class="nav-logo">KARAKORAM<span>AI</span></a>
+    <a href="#" class="nav-logo">QASIM<span>MUSHTAQ</span></a>
     <ul class="nav-links">
       <li><a href="#about">About</a></li>
       <li><a href="#projects">Projects</a></li>
+      <li><a href="#writing">Writing</a></li>
       <li><a href="#experience">Experience</a></li>
-      <li><a href="#services">Services</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
   </nav>
 
   <!-- Hero -->
   <div class="hero">
-    <div class="hero-tag">Islamabad, Pakistan &nbsp;·&nbsp; AI Automation &nbsp;·&nbsp; Robotics</div>
+    <div class="hero-tag">Islamabad, Pakistan &nbsp;·&nbsp; Robotics & AI &nbsp;·&nbsp; Technical Writing</div>
     <h1>
       <div>Qasim</div>
       <div class="line2">Mushtaq</div>
       <div class="line3">_</div>
     </h1>
     <p class="hero-sub">
-      <strong>Mechanical Engineer turned AI builder.</strong> Founder of Karakoram AI — an automation studio helping Pakistani startups eliminate repetitive work with Python and large language models. MSc Robotics &amp; AI at <span class="highlight">NUST</span>. Senior STEAM Trainer at <span class="highlight">LearnOBots</span>.
+      <strong>Mechanical Engineer turned AI builder and educator.</strong> Completing my MSc in Robotics &amp; AI at <span class="highlight">NUST</span>. Senior STEAM Trainer at <span class="highlight">LearnOBots</span>, training 500+ people in AI and robotics across Pakistan — and writing technical documentation on how it all works.
     </p>
     <div class="hero-ctas">
       <a href="https://ai-meetingsimplify.streamlit.app" target="_blank" class="btn-primary">
@@ -569,7 +553,7 @@
       <a href="https://linkedin.com/in/qasimushtaq" target="_blank" class="btn-ghost">
         LinkedIn
       </a>
-      <a href="mailto:mqasimushtaqokara@gmail.com" class="btn-ghost">
+      <a href="mailto:cassimhossain@gmail.com" class="btn-ghost">
         Get in Touch
       </a>
     </div>
@@ -583,8 +567,8 @@
         <div class="stat-label">Years in EdTech</div>
       </div>
       <div class="stat-item">
-        <div class="stat-num">1<span>st</span></div>
-        <div class="stat-label">AI Product Live</div>
+        <div class="stat-num">1</div>
+        <div class="stat-label">Live AI Product</div>
       </div>
       <div class="stat-item">
         <div class="stat-num">0<span>₨</span></div>
@@ -603,7 +587,7 @@
       <div class="about-text">
         <p>I sit at an intersection most people never reach. I have a <strong>Mechanical Engineering degree from NUST</strong>, I'm completing my <strong>MSc in Robotics and AI</strong>, and I've spent two years proving that complex AI knowledge can be made accessible — at scale, across every kind of institution Pakistan has.</p>
         <p>That combination means I approach AI not as an abstraction but as a <strong>system that has to work reliably</strong> in the real world — with real constraints, real failure modes, and real humans on the other end.</p>
-        <p>I founded <strong class="highlight">Karakoram AI</strong> to translate that engineering discipline into products. Not demos. Not MVPs that break in front of clients. Tools that actually work.</p>
+        <p>I build practical tools with that same discipline. Not demos. Not MVPs that break in front of users. Things that actually work — and I write about how they work, clearly enough for anyone to follow.</p>
         <p>Pakistan has one of the youngest populations on earth. The engineers being built today will define the next decade. That is what the education side of my work is about.</p>
       </div>
       <div>
@@ -633,8 +617,8 @@
           <div class="skill-tags">
             <span class="skill-tag" style="color:var(--green);border-color:rgba(16,185,129,0.3)">MSc Robotics & AI — NUST</span>
             <span class="skill-tag" style="color:var(--green);border-color:rgba(16,185,129,0.3)">Sr. STEAM Trainer — LearnOBots</span>
-            <span class="skill-tag" style="color:var(--glow);border-color:rgba(96,165,250,0.3)">Founder — Karakoram AI</span>
-            <span class="skill-tag" style="color:var(--accent);border-color:rgba(245,158,11,0.3)">Open to: Automation clients</span>
+            <span class="skill-tag" style="color:var(--glow);border-color:rgba(96,165,250,0.3)">Open to: Technical writing</span>
+            <span class="skill-tag" style="color:var(--accent);border-color:rgba(245,158,11,0.3)">Open to: AI/automation projects</span>
           </div>
         </div>
       </div>
@@ -759,6 +743,39 @@
 
   <div class="divider"></div>
 
+  <!-- Writing -->
+  <section id="writing">
+    <div class="section-label">Writing</div>
+    <h2>Things I've <em>Explained</em></h2>
+
+    <div class="projects-grid">
+
+      <!--
+        HOW TO ADD A NEW ARTICLE CARD:
+        1. Write the piece using /writing/template.html as your starting point.
+        2. Save it as /writing/your-article-slug.html
+        3. Copy one <a class="project-card"> block below, update the href,
+           status label, title, description, and tags.
+        4. Newest piece goes first.
+      -->
+
+      <a href="writing/autonomous-navigation-vehicle.html" class="project-card" data-cat="all">
+        <span class="project-status status-building">Draft — publishing soon</span>
+        <div class="project-title">Building a PID-Controlled Autonomous Navigation Vehicle</div>
+        <div class="project-desc">An Arduino/ESP32 build with real-time ultrasonic obstacle detection and PID-based path-following — from hardware setup through tuning the control loop, with the working code and what I'd change next time.</div>
+        <div class="project-stack">
+          <span class="stack-tag">Arduino</span>
+          <span class="stack-tag">ESP32</span>
+          <span class="stack-tag">PID Control</span>
+          <span class="stack-tag">Robotics</span>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
   <!-- Experience -->
   <section id="experience">
     <div class="section-label">Experience</div>
@@ -837,54 +854,14 @@
 
   <div class="divider"></div>
 
-  <!-- Services -->
-  <section id="services">
-    <div class="section-label">Karakoram AI — Services</div>
-    <h2>What I <em>Build</em> for Clients</h2>
-    <div class="services-grid">
-      <div class="service-card">
-        <div class="service-num">01</div>
-        <div class="service-title">AI Meeting Summarizer</div>
-        <div class="service-desc">Transcribe recordings, extract action items, decisions, and owners. Deliver a branded PDF report automatically.</div>
-      </div>
-      <div class="service-card">
-        <div class="service-num">02</div>
-        <div class="service-title">Knowledge Base Chatbot</div>
-        <div class="service-desc">Turn your company docs, SOPs, and FAQs into a chatbot your team can query in plain English. No more folder hunting.</div>
-      </div>
-      <div class="service-card">
-        <div class="service-num">03</div>
-        <div class="service-title">Automated Report Pipelines</div>
-        <div class="service-desc">Replace manually built weekly and monthly reports with automated AI pipelines that run on a schedule.</div>
-      </div>
-      <div class="service-card">
-        <div class="service-num">04</div>
-        <div class="service-title">WhatsApp & Email AI Bot</div>
-        <div class="service-desc">Automate repetitive customer queries and lead follow-ups. Your team handles only conversations that need a human.</div>
-      </div>
-      <div class="service-card">
-        <div class="service-num">05</div>
-        <div class="service-title">Custom Workflow Automation</div>
-        <div class="service-desc">End-to-end automation of any repetitive business process — data entry, document generation, multi-step workflows.</div>
-      </div>
-      <div class="service-card">
-        <div class="service-num">06</div>
-        <div class="service-title">STEM & AI Workshops</div>
-        <div class="service-desc">Hands-on workshops for engineering teams and students. Python, LLMs, robotics. Delivered in Islamabad or online.</div>
-      </div>
-    </div>
-  </section>
-
-  <div class="divider"></div>
-
   <!-- Contact -->
   <section id="contact">
     <div class="contact-inner">
       <div class="section-label" style="justify-content:center">Contact</div>
       <h2>Let's <em>Build</em> Something</h2>
-      <p>If your team spends hours every week on a task that feels too repetitive to justify, I can probably automate it. Based in Islamabad. Working globally.</p>
+      <p>If you're building in AI, robotics, or embedded systems and need someone who can build it, teach it, or write about it clearly — let's talk. Based in Islamabad. Working globally.</p>
       <div class="contact-links">
-        <a href="mailto:mqasimushtaqokara@gmail.com" class="btn-primary">Send an Email</a>
+        <a href="mailto:cassimhossain@gmail.com" class="btn-primary">Send an Email</a>
         <a href="https://linkedin.com/in/qasimushtaq" target="_blank" class="btn-ghost">LinkedIn</a>
         <a href="https://ai-meetingsimplify.streamlit.app" target="_blank" class="btn-ghost">Live Demo</a>
       </div>
@@ -893,8 +870,8 @@
 
   <!-- Footer -->
   <footer>
-    <p>© 2026 <a href="#">Karakoram AI</a> — Islamabad, Pakistan</p>
-    <p>Built by Qasim Mushtaq &nbsp;·&nbsp; <a href="https://github.com/cassimhossain" target="_blank">GitHub</a></p>
+    <p>© 2026 Qasim Mushtaq — Islamabad, Pakistan</p>
+    <p><a href="https://github.com/cassimhossain" target="_blank">GitHub</a> &nbsp;·&nbsp; <a href="mailto:cassimhossain@gmail.com">cassimhossain@gmail.com</a></p>
   </footer>
 
   <script>
