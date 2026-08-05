@@ -186,7 +186,7 @@
 <body>
 
   <div class="topbar">
-    <a href="../index.html#writing" class="back-link">&larr; back to cassimhossain.github.io</a>
+    <a href="../index.html#writing" class="back-link">&larr; back to qasimmushtaq.com</a>
   </div>
 
   <article>
@@ -209,7 +209,7 @@
     </div>
 
     <!-- ═══════════════════════════════════════════════════════════
-         BODY — suggested structure for a hardware/tutorial piece.
+         BODY — suggested structure for a hardware/software piece.
          Delete these instructional notes as you write; keep the
          h2 headings as a skeleton, or change them to your own.
          ═══════════════════════════════════════════════════════════ -->
@@ -217,69 +217,64 @@
     <h2>The problem</h2>
     <p>
       One or two paragraphs: what were you trying to build, and why
-      does obstacle-avoidance/path-following matter as a problem?
-      What's the real constraint — cost, part availability, response
-      time — that made this non-trivial? Ground it in something
-      specific (a classroom demo, a competition, a personal project),
-      not generic robotics-tutorial framing.
+      does [this problem] matter? What's the real constraint — cost, 
+      part availability, response time, learning outcome — that made 
+      this non-trivial? Ground it in something specific (a classroom 
+      demo, a competition, a personal project), not generic framing.
     </p>
 
-    <h2>Hardware</h2>
+    <h2>Hardware / Architecture</h2>
     <p>
       What you used and why you chose it over alternatives. A reader
-      should be able to source the same parts.
+      should be able to source the same parts or replicate your approach.
     </p>
     <ul>
-      <li>Microcontroller: Arduino / ESP32 — which, and why</li>
-      <li>Sensors: ultrasonic module(s), placement, and field of view</li>
-      <li>Motor driver, chassis, power — whatever's relevant</li>
+      <li>Microcontroller or main component — which, and why</li>
+      <li>Sensors or supporting hardware — placement and rationale</li>
+      <li>Power, communication, mechanical considerations</li>
     </ul>
     <figure>
-      <!-- Swap in a real photo of your build once you have one -->
-      <!-- <img src="images/rig.jpg" alt="Wiring diagram of the navigation vehicle"> -->
-      <figcaption>[ photo or wiring diagram of the build ]</figcaption>
+      <!-- Swap in a real photo or wiring diagram of your build -->
+      <!-- <img src="images/build.jpg" alt="Description of build"> -->
+      <figcaption>[ photo or schematic of the build ]</figcaption>
     </figure>
 
-    <h2>The control loop</h2>
+    <h2>Implementation</h2>
     <p>
-      This is the section that separates a real technical piece from
-      a shopping list. Explain the actual PID logic: what error signal
-      you're feeding it, how you tuned Kp/Ki/Kd, and what happened
-      when the tuning was wrong before it was right. Show real
-      numbers if you have them.
+      This section separates a real technical piece from a shopping list. 
+      Explain the actual logic: what algorithms or design choices you made, 
+      how you tuned parameters, and what happened when the first attempt 
+      was wrong. Show real numbers or code snippets if you have them.
     </p>
 
-    <pre><code>// Paste your actual, working code here.
-// Trim it to the part that matters — the full PID loop,
-// not the entire sketch. Link the full repo separately.
+    <pre><code>// Your actual, working code here.
+// Trim to the key logic, not the entire sketch.
+// Link the full repo separately.
 
-float error = targetDistance - currentDistance;
-integral += error;
-float derivative = error - lastError;
-float output = Kp * error + Ki * integral + Kd * derivative;
-</code></pre>
+function controlLoop() {
+  // Your implementation
+}</code></pre>
 
     <div class="callout">
       <strong>What went wrong first:</strong> readers trust a piece
-      more when you show a real failure mode — oscillation from Kd
-      being too low, sensor noise near walls, whatever actually broke
-      on your bench. Put it here.
+      more when you show a real failure mode — unexpected behavior, 
+      a bottleneck you discovered, whatever actually broke on your bench. 
+      This paragraph is where you build credibility.
     </div>
 
     <h2>Results</h2>
     <p>
-      What did it actually do? Numbers beat adjectives — response
-      time, success rate over N trials, distance accuracy. If you
-      have a video or GIF of it running, this is where it goes.
+      What did it actually achieve? Numbers beat adjectives — response
+      time, success rate over N trials, distance accuracy, performance 
+      vs cost trade-offs. If you have a video or GIF, this is where it goes.
     </p>
 
     <h2>What I'd do differently</h2>
     <p>
-      One or two honest notes on the next iteration — a better sensor,
-      a state machine instead of pure PID for sharp turns, whatever
-      you'd actually change. This is the paragraph editors and
-      hiring managers read most closely, because it shows judgment,
-      not just execution.
+      One or two honest notes on the next iteration — a better component,
+      a different algorithm, whatever you'd actually change. This paragraph
+      shows judgment, not just execution. Readers and hiring managers read 
+      this section closely.
     </p>
 
     <p>

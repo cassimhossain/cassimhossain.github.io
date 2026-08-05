@@ -42,30 +42,34 @@
       overflow-x: hidden;
     }
 
-    /* Custom cursor — desktop/mouse only, never hides the real cursor on touch */
+    /* Custom robot cursor — desktop/mouse only, never hides the real cursor on touch */
     @media (pointer: fine) {
-      body { cursor: none; }
+      *, *::before, *::after { cursor: none !important; }
     }
-    .cursor {
-      width: 8px; height: 8px;
-      background: var(--glow);
-      border-radius: 50%;
-      position: fixed; top: 0; left: 0;
+    .robot-cursor {
+      width: 40px; 
+      height: 40px;
+      position: fixed; 
+      top: 0; 
+      left: 0;
       pointer-events: none;
       z-index: 9999;
-      transition: transform 0.1s ease;
+      filter: drop-shadow(0 0 6px rgba(245,158,11,0.65)) drop-shadow(0 0 14px rgba(245,158,11,0.35));
+      transition: filter 0.25s ease;
     }
-    .cursor-ring {
-      width: 32px; height: 32px;
-      border: 1px solid rgba(96,165,250,0.4);
-      border-radius: 50%;
-      position: fixed; top: 0; left: 0;
-      pointer-events: none;
-      z-index: 9998;
-      transition: transform 0.15s ease, width 0.2s, height 0.2s, border-color 0.2s;
+    .robot-cursor.is-active {
+      filter: drop-shadow(0 0 8px rgba(245,158,11,0.9)) drop-shadow(0 0 22px rgba(94,234,212,0.5));
+    }
+    /* Idle pose shows by default; active (pointing/clicking) pose shows on hover of clickable elements */
+    .robot-cursor .arms-active { display: none; }
+    .robot-cursor.is-active .arms-idle { display: none; }
+    .robot-cursor.is-active .arms-active { display: inline; }
+    .robot-cursor.is-active .robot-eye,
+    .robot-cursor.is-active .robot-chest-light {
+      fill: #FDE68A;
     }
     @media (pointer: coarse) {
-      .cursor, .cursor-ring { display: none; }
+      .robot-cursor { display: none; }
     }
 
     /* ── NOISE OVERLAY ─────────────────────────── */
@@ -182,7 +186,7 @@
       font-family: 'DM Mono', monospace;
       font-size: 0.78rem; letter-spacing: 0.08em;
       text-decoration: none; text-transform: uppercase;
-      border: none; cursor: none;
+      border: none; cursor: pointer;
       transition: background 0.2s, transform 0.2s;
       clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%);
     }
@@ -195,338 +199,283 @@
       font-family: 'DM Mono', monospace;
       font-size: 0.78rem; letter-spacing: 0.08em;
       text-decoration: none; text-transform: uppercase;
-      border: 1px solid var(--dgrey); cursor: none;
+      border: 1px solid var(--dgrey); cursor: pointer;
       transition: border-color 0.2s, color 0.2s, transform 0.2s;
-      clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%);
     }
     .btn-ghost:hover { border-color: var(--glow); color: var(--glow); transform: translateY(-2px); }
 
-    .hero-stats {
-      margin-top: 72px;
-      display: flex; gap: 48px; flex-wrap: wrap;
-      padding-top: 40px;
-      border-top: 1px solid rgba(96,165,250,0.1);
-      opacity: 0; animation: fadeUp 0.8s 0.8s forwards;
-    }
-    .stat-item { display: flex; flex-direction: column; gap: 6px; }
-    .stat-num {
-      font-family: 'Syne', sans-serif;
-      font-size: 2.2rem; font-weight: 800;
-      color: var(--white); line-height: 1;
-    }
-    .stat-num span { color: var(--glow); }
-    .stat-label {
+    /* ── PROJECTS ──────────────────────────────── */
+    .section-label {
       font-family: 'DM Mono', monospace;
-      font-size: 0.68rem; letter-spacing: 0.12em;
-      color: var(--grey); text-transform: uppercase;
+      font-size: 0.7rem; letter-spacing: 0.15em;
+      color: var(--glow); text-transform: uppercase;
+      margin-bottom: 40px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .section-label::after {
+      content: '';
+      flex: 1; height: 1px;
+      background: linear-gradient(to right, rgba(96,165,250,0.3), transparent);
     }
 
-    /* ── SECTIONS ──────────────────────────────── */
     section {
       position: relative; z-index: 2;
       max-width: 1100px; margin: 0 auto;
-      padding: 100px 48px;
+      padding: 100px 48px 80px;
     }
-    .section-label {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.68rem; letter-spacing: 0.2em;
-      color: var(--glow); text-transform: uppercase;
-      margin-bottom: 16px;
-      display: flex; align-items: center; gap: 12px;
-    }
-    .section-label::before {
-      content: '';
-      display: block; width: 24px; height: 1px;
-      background: var(--glow);
-    }
-    h2 {
+
+    section h2 {
       font-family: 'Syne', sans-serif;
-      font-size: clamp(2rem, 4vw, 3rem);
-      font-weight: 800; letter-spacing: -0.02em;
-      margin-bottom: 48px; line-height: 1.1;
+      font-weight: 800;
+      font-size: clamp(2rem, 4vw, 4rem);
+      line-height: 1.15;
+      margin-bottom: 60px;
     }
-    h2 em { font-style: normal; color: var(--glow); }
-
-    /* ── ABOUT ─────────────────────────────────── */
-    .about-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 48px; align-items: start;
-    }
-    .about-text p {
-      font-size: 1rem; line-height: 1.8;
-      color: var(--text); margin-bottom: 20px;
-    }
-    .about-text p strong { color: var(--white); font-weight: 500; }
-    .about-text p .highlight {
+    section h2 em {
       color: var(--glow);
-      font-family: 'DM Mono', monospace;
-      font-size: 0.9em;
+      font-style: italic;
     }
 
-    .about-card {
-      background: var(--navy2);
-      border: 1px solid rgba(96,165,250,0.1);
-      padding: 32px;
-      clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 0 100%);
-    }
-    .about-card-title {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.68rem; letter-spacing: 0.15em;
-      color: var(--glow); text-transform: uppercase;
-      margin-bottom: 20px;
-    }
-    .skill-tags {
-      display: flex; flex-wrap: wrap; gap: 8px;
-    }
-    .skill-tag {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.7rem; letter-spacing: 0.05em;
-      color: var(--grey);
-      padding: 6px 12px;
-      border: 1px solid var(--dgrey);
-      transition: border-color 0.2s, color 0.2s;
-    }
-    .skill-tag:hover { border-color: var(--glow); color: var(--glow); }
-
-    /* ── PROJECTS ──────────────────────────────── */
     .projects-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 24px;
+      grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+      gap: 28px;
+      margin-bottom: 40px;
     }
+
     .project-card {
-      background: var(--navy2);
-      border: 1px solid rgba(96,165,250,0.08);
+      background: linear-gradient(135deg, rgba(11,24,41,0.6), rgba(15,34,64,0.4));
+      border: 1px solid rgba(96,165,250,0.15);
       padding: 32px;
-      clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 0 100%);
-      transition: border-color 0.25s, transform 0.25s;
-      text-decoration: none; color: inherit;
-      display: block;
+      text-decoration: none;
+      color: inherit;
+      transition: all 0.3s;
+      display: flex; flex-direction: column;
+      gap: 12px;
+      cursor: pointer;
     }
     .project-card:hover {
-      border-color: rgba(96,165,250,0.35);
+      border-color: rgba(96,165,250,0.4);
+      background: linear-gradient(135deg, rgba(11,24,41,0.8), rgba(15,34,64,0.6));
       transform: translateY(-4px);
     }
-    .project-card.featured {
-      grid-column: 1 / -1;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 40px; align-items: center;
-      border-color: rgba(96,165,250,0.2);
-      background: linear-gradient(135deg, var(--navy2), var(--navy3));
-    }
+    .project-card.hidden { display: none; }
+
     .project-status {
       font-family: 'DM Mono', monospace;
-      font-size: 0.65rem; letter-spacing: 0.15em;
+      font-size: 0.65rem; letter-spacing: 0.1em;
       text-transform: uppercase;
       padding: 4px 10px;
-      display: inline-block;
-      margin-bottom: 16px;
+      width: fit-content;
+      border-radius: 3px;
     }
-    .status-live { color: var(--green); border: 1px solid rgba(16,185,129,0.3); background: rgba(16,185,129,0.06); }
-    .status-building { color: var(--accent); border: 1px solid rgba(245,158,11,0.3); background: rgba(245,158,11,0.06); }
-    .status-research { color: #C084FC; border: 1px solid rgba(192,132,252,0.3); background: rgba(192,132,252,0.06); }
+    .status-live { background: rgba(16,185,129,0.2); color: var(--green); }
+    .status-building { background: rgba(245,158,11,0.2); color: var(--accent); }
+    .status-archived { background: rgba(148,163,184,0.2); color: var(--grey); }
 
-    /* Filter tabs */
-    .filter-tabs {
-      display: flex; gap: 8px; margin-bottom: 36px; flex-wrap: wrap;
+    .project-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 1.2rem;
+      margin-top: 8px;
+    }
+    .project-desc {
+      font-size: 0.92rem;
+      color: var(--text);
+      flex: 1;
+      line-height: 1.6;
+    }
+    .project-stack {
+      display: flex; gap: 8px; flex-wrap: wrap; margin-top: auto; padding-top: 12px;
+    }
+    .stack-tag {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem; letter-spacing: 0.08em;
+      color: var(--ice);
+      background: rgba(96,165,250,0.1);
+      padding: 4px 10px;
+      border-radius: 3px;
+      text-transform: uppercase;
+    }
+
+    /* ── FILTERS ───────────────────────────────── */
+    .filter-group {
+      display: flex; gap: 12px; flex-wrap: wrap;
+      margin-bottom: 44px;
     }
     .filter-btn {
       font-family: 'DM Mono', monospace;
       font-size: 0.7rem; letter-spacing: 0.1em;
       text-transform: uppercase;
-      padding: 8px 18px;
-      background: transparent;
       color: var(--grey);
-      border: 1px solid var(--dgrey);
-      cursor: none;
+      background: transparent;
+      border: 1px solid rgba(96,165,250,0.2);
+      padding: 8px 16px;
+      cursor: pointer;
       transition: all 0.2s;
     }
     .filter-btn:hover, .filter-btn.active {
+      color: var(--glow);
       border-color: var(--glow);
-      color: var(--glow);
-      background: rgba(96,165,250,0.06);
+      background: rgba(96,165,250,0.05);
     }
-    .project-card.hidden { display: none; }
-
-    /* Highlight items inside project cards */
-    .project-highlights {
-      margin: 14px 0 0;
-      display: flex; flex-direction: column; gap: 6px;
-    }
-    .highlight-item {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.68rem;
-      color: var(--grey);
-      padding-left: 14px;
-      position: relative;
-      line-height: 1.5;
-    }
-    .highlight-item::before {
-      content: '→';
-      position: absolute; left: 0;
-      color: var(--glow);
-    }
-    .project-title {
-      font-family: 'Syne', sans-serif;
-      font-size: 1.4rem; font-weight: 700;
-      margin-bottom: 12px; line-height: 1.2;
-    }
-    .project-desc {
-      font-size: 0.9rem; line-height: 1.7;
-      color: var(--text); margin-bottom: 20px;
-    }
-    .project-stack {
-      display: flex; flex-wrap: wrap; gap: 6px;
-    }
-    .stack-tag {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.65rem;
-      color: var(--glow);
-      padding: 3px 8px;
-      background: rgba(96,165,250,0.07);
-      border: 1px solid rgba(96,165,250,0.15);
-    }
-    .project-visual {
-      background: var(--navy3);
-      border: 1px solid rgba(96,165,250,0.1);
-      padding: 24px;
-      font-family: 'DM Mono', monospace;
-      font-size: 0.72rem;
-      color: var(--grey);
-      line-height: 1.8;
-    }
-    .project-visual .token-key   { color: #7DD3FC; }
-    .project-visual .token-str   { color: #86EFAC; }
-    .project-visual .token-num   { color: #FCA5A5; }
-    .project-visual .token-punct { color: #94A3B8; }
 
     /* ── EXPERIENCE ────────────────────────────── */
-    .exp-list { display: flex; flex-direction: column; gap: 2px; }
+    .exp-list { display: flex; flex-direction: column; gap: 48px; }
     .exp-item {
       display: grid;
-      grid-template-columns: 180px 1fr;
-      gap: 32px;
-      padding: 32px 0;
-      border-bottom: 1px solid rgba(96,165,250,0.07);
-      align-items: start;
+      grid-template-columns: 200px 1fr;
+      gap: 36px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid rgba(96,165,250,0.1);
     }
-    .exp-meta { display: flex; flex-direction: column; gap: 6px; }
-    .exp-period {
+    .exp-item:last-child { border: none; }
+    .exp-meta {
       font-family: 'DM Mono', monospace;
-      font-size: 0.68rem; letter-spacing: 0.08em;
-      color: var(--glow);
+      font-size: 0.8rem;
+      color: var(--grey);
     }
-    .exp-company {
-      font-size: 0.82rem; color: var(--grey);
-      line-height: 1.4;
-    }
-    .exp-content {}
+    .exp-period { margin-bottom: 8px; }
+    .exp-company { color: var(--text); font-weight: 500; }
     .exp-role {
       font-family: 'Syne', sans-serif;
-      font-size: 1.15rem; font-weight: 700;
-      margin-bottom: 10px;
+      font-weight: 700;
+      font-size: 1.05rem;
+      margin-bottom: 12px;
+      color: var(--white);
     }
     .exp-desc {
-      font-size: 0.88rem; line-height: 1.7;
+      font-size: 0.95rem;
       color: var(--text);
+      line-height: 1.6;
+      margin-bottom: 16px;
     }
-    .exp-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+    .exp-tags {
+      display: flex; gap: 8px; flex-wrap: wrap;
+    }
     .exp-tag {
       font-family: 'DM Mono', monospace;
-      font-size: 0.63rem;
-      color: var(--dgrey);
-      padding: 3px 8px;
-      border: 1px solid var(--dgrey);
+      font-size: 0.65rem; letter-spacing: 0.08em;
+      color: var(--ice);
+      background: rgba(96,165,250,0.1);
+      padding: 4px 10px;
+      border-radius: 3px;
+      text-transform: uppercase;
     }
 
-    /* ── CONTACT ───────────────────────────────── */
+    /* ── CONTACT ───────────────────────────────– */
     .contact-inner {
-      background: linear-gradient(135deg, var(--navy2), var(--navy3));
-      border: 1px solid rgba(96,165,250,0.15);
-      padding: 64px;
       text-align: center;
-      clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px));
+      padding-top: 40px;
     }
-    .contact-inner h2 { margin-bottom: 16px; }
-    .contact-inner p {
-      font-size: 1rem; color: var(--text);
-      max-width: 480px; margin: 0 auto 40px;
-      line-height: 1.7;
+    .contact-links {
+      display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;
+      margin-top: 40px;
     }
-    .contact-links { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; }
 
-    /* ── FOOTER ────────────────────────────────── */
-    footer {
-      position: relative; z-index: 2;
-      border-top: 1px solid rgba(96,165,250,0.07);
-      padding: 32px 48px;
-      display: flex; justify-content: space-between; align-items: center;
-      max-width: 1100px; margin: 0 auto;
-    }
-    footer p {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.68rem; color: var(--dgrey);
-      letter-spacing: 0.08em;
-    }
-    footer a { color: var(--glow); text-decoration: none; }
-
-    /* ── DIVIDER ───────────────────────────────── */
+    /* ── FOOTER ────────────────────────────────– */
     .divider {
-      position: relative; z-index: 2;
       height: 1px;
-      background: linear-gradient(to right, transparent, rgba(96,165,250,0.15), transparent);
+      background: linear-gradient(to right, transparent, rgba(96,165,250,0.1), transparent);
+      margin: 0 48px;
     }
+    footer {
+      text-align: center;
+      padding: 60px 48px;
+      font-size: 0.85rem;
+      color: var(--grey);
+      z-index: 2; position: relative;
+    }
+    footer a { color: var(--glow); }
 
-    /* ── ANIMATIONS ────────────────────────────── */
+    /* ── ANIMATIONS ────────────────────────────– */
     @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(24px); }
-      to   { opacity: 1; transform: translateY(0); }
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
-    @keyframes float {
-      0%, 100% { transform: translateY(0px); }
-      50%       { transform: translateY(-8px); }
-    }
-    .float { animation: float 4s ease-in-out infinite; }
 
-    /* ── SCROLLBAR ─────────────────────────────── */
-    ::-webkit-scrollbar { width: 4px; }
-    ::-webkit-scrollbar-track { background: var(--navy); }
-    ::-webkit-scrollbar-thumb { background: var(--dgrey); border-radius: 2px; }
-
-    /* ── RESPONSIVE ────────────────────────────── */
+    /* ── RESPONSIVE ────────────────────────────– */
     @media (max-width: 768px) {
       nav { padding: 16px 24px; }
-      .nav-links { display: none; }
+      section { padding: 80px 24px; }
+      .projects-grid { grid-template-columns: 1fr; }
+      .exp-item { grid-template-columns: 1fr; }
       .hero { padding: 100px 24px 60px; }
-      section { padding: 60px 24px; }
-      .about-grid { grid-template-columns: 1fr; }
-      .project-card.featured { grid-template-columns: 1fr; }
-      .exp-item { grid-template-columns: 1fr; gap: 8px; }
-      .contact-inner { padding: 40px 24px; }
-      footer { flex-direction: column; gap: 12px; text-align: center; }
+      .contact-links { flex-direction: column; }
+      .btn-primary, .btn-ghost { width: 100%; justify-content: center; }
     }
   </style>
 </head>
 <body>
 
-  <!-- Cursor -->
-  <div class="cursor" id="cursor"></div>
-  <div class="cursor-ring" id="cursorRing"></div>
-
-  <!-- Background elements -->
-  <div class="grid-bg"></div>
-  <svg class="mountain-bg" viewBox="0 0 1440 500" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
-    <polygon points="0,500 180,200 320,350 480,100 600,280 720,50 840,220 960,140 1080,300 1200,80 1320,260 1440,160 1440,500" fill="#1A56DB"/>
-    <polygon points="0,500 240,280 400,380 560,180 680,320 800,120 920,260 1040,180 1160,340 1280,140 1440,220 1440,500" fill="#0B1829" opacity="0.7"/>
+  <svg class="mountain-bg" viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0,540 L240,420 L480,480 L720,300 L960,450 L1200,200 L1440,380 L1680,250 L1920,420 L1920,1080 L0,1080 Z" fill="rgba(96,165,250,0.1)" />
   </svg>
 
-  <!-- Nav -->
+  <div class="grid-bg"></div>
+
+  <!-- Robot cursor SVG -->
+  <svg id="robotCursor" class="robot-cursor" viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg" style="transform: translate(-22px, -22px);">
+    <!-- Antenna -->
+    <line x1="20" y1="4" x2="20" y2="8" stroke="#F59E0B" stroke-width="1.6" stroke-linecap="round"/>
+    <circle cx="20" cy="3" r="1.8" fill="#F59E0B"/>
+
+    <!-- Head -->
+    <rect x="11" y="8" width="18" height="11" rx="3.5" fill="rgba(11,24,41,0.85)" stroke="#F59E0B" stroke-width="1.6"/>
+    <!-- Visor -->
+    <rect x="14.5" y="11.5" width="11" height="4.5" rx="2" fill="#050B16" stroke="#F59E0B" stroke-width="0.8"/>
+    <!-- Eyes -->
+    <circle class="robot-eye" cx="17" cy="13.8" r="1.15" fill="#5EEAD4"/>
+    <circle class="robot-eye" cx="23" cy="13.8" r="1.15" fill="#5EEAD4"/>
+    <!-- Ear bolts -->
+    <circle cx="10" cy="13.5" r="1.1" fill="#F59E0B"/>
+    <circle cx="30" cy="13.5" r="1.1" fill="#F59E0B"/>
+
+    <!-- Neck -->
+    <line x1="20" y1="19" x2="20" y2="21" stroke="#F59E0B" stroke-width="1.6"/>
+
+    <!-- Body -->
+    <rect x="9" y="21" width="22" height="14" rx="3.5" fill="rgba(11,24,41,0.85)" stroke="#F59E0B" stroke-width="1.6"/>
+    <!-- Chest panel -->
+    <rect x="15.5" y="24.5" width="9" height="6.5" rx="1.6" fill="#050B16" stroke="#F59E0B" stroke-width="0.8"/>
+    <circle class="robot-chest-light" cx="20" cy="27.7" r="1.5" fill="#5EEAD4"/>
+    <line x1="16.7" y1="27.7" x2="18" y2="27.7" stroke="#5EEAD4" stroke-width="0.7"/>
+    <line x1="22" y1="27.7" x2="23.3" y2="27.7" stroke="#5EEAD4" stroke-width="0.7"/>
+    <!-- Rivets -->
+    <circle cx="11" cy="23" r="0.7" fill="#F59E0B"/>
+    <circle cx="29" cy="23" r="0.7" fill="#F59E0B"/>
+    <circle cx="11" cy="33" r="0.7" fill="#F59E0B"/>
+    <circle cx="29" cy="33" r="0.7" fill="#F59E0B"/>
+
+    <!-- Arms: idle pose (resting at sides) -->
+    <g class="arms-idle">
+      <line x1="9" y1="25" x2="4" y2="27" stroke="#F59E0B" stroke-width="1.6" stroke-linecap="round"/>
+      <circle cx="4" cy="27" r="1.5" fill="none" stroke="#F59E0B" stroke-width="1.3"/>
+      <line x1="31" y1="25" x2="36" y2="27" stroke="#F59E0B" stroke-width="1.6" stroke-linecap="round"/>
+      <circle cx="36" cy="27" r="1.5" fill="none" stroke="#F59E0B" stroke-width="1.3"/>
+    </g>
+
+    <!-- Arms: active pose (right arm raised, pointing/clicking; left arm braced) -->
+    <g class="arms-active">
+      <line x1="9" y1="25" x2="5" y2="30" stroke="#F59E0B" stroke-width="1.6" stroke-linecap="round"/>
+      <circle cx="5" cy="30" r="1.5" fill="none" stroke="#F59E0B" stroke-width="1.3"/>
+      <line x1="31" y1="24" x2="37" y2="14" stroke="#F59E0B" stroke-width="1.6" stroke-linecap="round"/>
+      <line x1="37" y1="14" x2="40" y2="10" stroke="#F59E0B" stroke-width="1.8" stroke-linecap="round"/>
+      <circle cx="40" cy="10" r="1.7" fill="#5EEAD4"/>
+    </g>
+
+    <!-- Tread wheels -->
+    <circle cx="14.5" cy="35.5" r="2.9" fill="none" stroke="#F59E0B" stroke-width="1.6"/>
+    <line x1="14.5" y1="33.2" x2="14.5" y2="37.8" stroke="#F59E0B" stroke-width="0.8"/>
+    <line x1="12.2" y1="35.5" x2="16.8" y2="35.5" stroke="#F59E0B" stroke-width="0.8"/>
+    <circle cx="25.5" cy="35.5" r="2.9" fill="none" stroke="#F59E0B" stroke-width="1.6"/>
+    <line x1="25.5" y1="33.2" x2="25.5" y2="37.8" stroke="#F59E0B" stroke-width="0.8"/>
+    <line x1="23.2" y1="35.5" x2="27.8" y2="35.5" stroke="#F59E0B" stroke-width="0.8"/>
+  </svg>
+
   <nav>
-    <a href="#" class="nav-logo">QASIM<span>MUSHTAQ</span></a>
+    <a href="#" class="nav-logo">QASIM <span>MUSHTAQ</span></a>
     <ul class="nav-links">
-      <li><a href="#about">About</a></li>
       <li><a href="#projects">Projects</a></li>
       <li><a href="#writing">Writing</a></li>
       <li><a href="#experience">Experience</a></li>
@@ -534,209 +483,71 @@
     </ul>
   </nav>
 
-  <!-- Hero -->
   <div class="hero">
-    <div class="hero-tag">Islamabad, Pakistan &nbsp;·&nbsp; Robotics & AI &nbsp;·&nbsp; Technical Writing</div>
-    <h1>
-      <div>Qasim</div>
-      <div class="line2">Mushtaq</div>
-      <div class="line3">_</div>
-    </h1>
-    <p class="hero-sub">
-      <strong>Mechanical Engineer turned AI builder and educator.</strong> Completing my MSc in Robotics &amp; AI at <span class="highlight">NUST</span>. Senior STEAM Trainer at <span class="highlight">LearnOBots</span>, training 500+ people in AI and robotics across Pakistan — and writing technical documentation on how it all works.
-    </p>
+    <div class="hero-tag">Robotics • AI • Embedded Systems</div>
+    <h1>Build Better<br><span class="line2">Hardware</span><br><span class="line3">Systems</span></h1>
+    <p class="hero-sub">I'm a mechanical & robotics engineer from NUST building <strong>practical automation solutions</strong>, training 500+ learners across Pakistan, and writing clear technical guides on embedded systems, robotics, and AI.</p>
     <div class="hero-ctas">
-      <a href="https://ai-meetingsimplify.streamlit.app" target="_blank" class="btn-primary">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
-        Live Demo
-      </a>
-      <a href="https://linkedin.com/in/qasimushtaq" target="_blank" class="btn-ghost">
-        LinkedIn
-      </a>
-      <a href="mailto:cassimhossain@gmail.com" class="btn-ghost">
-        Get in Touch
-      </a>
-    </div>
-    <div class="hero-stats">
-      <div class="stat-item">
-        <div class="stat-num">500<span>+</span></div>
-        <div class="stat-label">Students Trained</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-num">2<span>+</span></div>
-        <div class="stat-label">Years in EdTech</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-num">1</div>
-        <div class="stat-label">Live AI Product</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-num">0<span>₨</span></div>
-        <div class="stat-label">Cost to Run Demo</div>
-      </div>
+      <a href="#projects" class="btn-primary">See My Work →</a>
+      <a href="mailto:cassimhossain@gmail.com" class="btn-ghost">Get in Touch</a>
     </div>
   </div>
 
-  <div class="divider"></div>
-
-  <!-- About -->
-  <section id="about">
-    <div class="section-label">About</div>
-    <h2>Engineer. <em>Builder.</em> Teacher.</h2>
-    <div class="about-grid">
-      <div class="about-text">
-        <p>I sit at an intersection most people never reach. I have a <strong>Mechanical Engineering degree from NUST</strong>, I'm completing my <strong>MSc in Robotics and AI</strong>, and I've spent two years proving that complex AI knowledge can be made accessible — at scale, across every kind of institution Pakistan has.</p>
-        <p>That combination means I approach AI not as an abstraction but as a <strong>system that has to work reliably</strong> in the real world — with real constraints, real failure modes, and real humans on the other end.</p>
-        <p>I build practical tools with that same discipline. Not demos. Not MVPs that break in front of users. Things that actually work — and I write about how they work, clearly enough for anyone to follow.</p>
-        <p>Pakistan has one of the youngest populations on earth. The engineers being built today will define the next decade. That is what the education side of my work is about.</p>
-      </div>
-      <div>
-        <div class="about-card" style="margin-bottom:20px;">
-          <div class="about-card-title">Technical Stack</div>
-          <div class="skill-tags">
-            <span class="skill-tag">Python</span>
-            <span class="skill-tag">LangChain</span>
-            <span class="skill-tag">FastAPI</span>
-            <span class="skill-tag">Streamlit</span>
-            <span class="skill-tag">Groq API</span>
-            <span class="skill-tag">Whisper</span>
-            <span class="skill-tag">OpenCV</span>
-            <span class="skill-tag">TensorFlow</span>
-            <span class="skill-tag">Arduino</span>
-            <span class="skill-tag">ESP32</span>
-            <span class="skill-tag">Raspberry Pi</span>
-            <span class="skill-tag">ROS</span>
-            <span class="skill-tag">SolidWorks</span>
-            <span class="skill-tag">ANSYS</span>
-            <span class="skill-tag">PID Control</span>
-            <span class="skill-tag">Vector DBs</span>
-          </div>
-        </div>
-        <div class="about-card">
-          <div class="about-card-title">Currently</div>
-          <div class="skill-tags">
-            <span class="skill-tag" style="color:var(--green);border-color:rgba(16,185,129,0.3)">MSc Robotics & AI — NUST</span>
-            <span class="skill-tag" style="color:var(--green);border-color:rgba(16,185,129,0.3)">Sr. STEAM Trainer — LearnOBots</span>
-            <span class="skill-tag" style="color:var(--glow);border-color:rgba(96,165,250,0.3)">Open to: Technical writing</span>
-            <span class="skill-tag" style="color:var(--accent);border-color:rgba(245,158,11,0.3)">Open to: AI/automation projects</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+  <svg class="mountain-bg" viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg" style="top: auto; bottom: auto; height: 300px; opacity: 0.04;">
+    <path d="M0,540 L240,420 L480,480 L720,300 L960,450 L1200,200 L1440,380 L1680,250 L1920,420 L1920,1080 L0,1080 Z" fill="rgba(96,165,250,0.1)" />
+  </svg>
 
   <div class="divider"></div>
 
   <!-- Projects -->
   <section id="projects">
-    <div class="section-label">Projects</div>
+    <div class="section-label">Featured Work</div>
     <h2>Things I've <em>Built</em></h2>
 
-    <!-- Filter tabs -->
-    <div class="filter-tabs">
+    <div class="filter-group">
       <button class="filter-btn active" data-filter="all">All</button>
-      <button class="filter-btn" data-filter="production">Production</button>
-      <button class="filter-btn" data-filter="research">Research</button>
-      <button class="filter-btn" data-filter="building">In Progress</button>
+      <button class="filter-btn" data-filter="hardware">Hardware</button>
+      <button class="filter-btn" data-filter="software">Software</button>
+      <button class="filter-btn" data-filter="learning">Learning</button>
     </div>
 
     <div class="projects-grid">
 
-      <!-- Featured — AI Meeting Summarizer -->
-      <a href="https://ai-meetingsimplify.streamlit.app" target="_blank" class="project-card featured" data-cat="production">
-        <div>
-          <span class="project-status status-live">Live in Production</span>
-          <div class="project-title">AI Meeting Summarizer</div>
-          <div class="project-desc">Upload any meeting audio or video. Transcribes with local Whisper, sends transcript to LLaMA 3.3 70B via Groq, and extracts action items, decisions, owners, due dates, and open questions — then generates a downloadable PDF report. 100% free stack. Audio never leaves your machine.</div>
-          <div class="project-stack">
-            <span class="stack-tag">Python</span>
-            <span class="stack-tag">Whisper</span>
-            <span class="stack-tag">Groq</span>
-            <span class="stack-tag">LLaMA 3.3 70B</span>
-            <span class="stack-tag">Streamlit</span>
-            <span class="stack-tag">ReportLab</span>
-            <span class="stack-tag">FFmpeg</span>
-          </div>
-        </div>
-        <div class="project-visual">
-          <div><span class="token-punct">{</span></div>
-          <div>&nbsp;&nbsp;<span class="token-key">"meeting_title"</span><span class="token-punct">:</span> <span class="token-str">"Blueprint AI Weekly Sync"</span><span class="token-punct">,</span></div>
-          <div>&nbsp;&nbsp;<span class="token-key">"action_items"</span><span class="token-punct">:</span> <span class="token-num">5</span><span class="token-punct">,</span></div>
-          <div>&nbsp;&nbsp;<span class="token-key">"decisions"</span><span class="token-punct">:</span> <span class="token-num">2</span><span class="token-punct">,</span></div>
-          <div>&nbsp;&nbsp;<span class="token-key">"open_questions"</span><span class="token-punct">:</span> <span class="token-num">1</span><span class="token-punct">,</span></div>
-          <div>&nbsp;&nbsp;<span class="token-key">"pdf_generated"</span><span class="token-punct">:</span> <span class="token-str">"true"</span><span class="token-punct">,</span></div>
-          <div>&nbsp;&nbsp;<span class="token-key">"model"</span><span class="token-punct">:</span> <span class="token-str">"llama-3.3-70b-versatile"</span></div>
-          <div><span class="token-punct">}</span></div>
+      <a href="writing/esp32-4wd-robot.html" class="project-card" data-cat="hardware">
+        <span class="project-status status-live">Live — in production</span>
+        <div class="project-title">ESP32 4WD Robot Platform</div>
+        <div class="project-desc">A wireless-controlled 4-wheel drive robot built on ESP32 with real-time motor control, obstacle sensing, and mobile app integration. Full hardware documentation, wiring schematics, and firmware source code included.</div>
+        <div class="project-stack">
+          <span class="stack-tag">ESP32</span>
+          <span class="stack-tag">Robotics</span>
+          <span class="stack-tag">IoT</span>
+          <span class="stack-tag">Motor Control</span>
         </div>
       </a>
 
-      <!-- Neural Network Autograd Engine -->
-      <div class="project-card" data-cat="research">
-        <span class="project-status status-research">MSc Research — NUST</span>
-        <div class="project-title">Neural Network Autograd Engine</div>
-        <div class="project-desc">Built a complete automatic differentiation engine in pure Python — no libraries, no shortcuts. Implements the full forward and backward pass of a computational graph from scalar Value nodes through to a working multi-layer perceptron trained with gradient descent.</div>
-        <div class="project-highlights">
-          <div class="highlight-item">Computational graph construction &amp; topological sorting</div>
-          <div class="highlight-item">Chain rule gradient accumulation through backward passes</div>
-          <div class="highlight-item">tanh, ReLU, sigmoid with analytical gradients</div>
-          <div class="highlight-item">Neuron, Layer, and MLP architecture from scratch</div>
-        </div>
-        <div class="project-stack" style="margin-top:16px">
-          <span class="stack-tag">Python</span>
-          <span class="stack-tag">Deep Learning</span>
-          <span class="stack-tag">Backpropagation</span>
-          <span class="stack-tag">Autograd</span>
-          <span class="stack-tag">Neural Networks</span>
-        </div>
-      </div>
-
-      <!-- fNIRS BCI -->
-      <div class="project-card" data-cat="research">
-        <span class="project-status status-research">MSc Research — NUST</span>
-        <div class="project-title">fNIRS Motor Activity Classification</div>
-        <div class="project-desc">ML pipeline to classify hand-grip motor activity versus rest states using functional near-infrared spectroscopy — a non-invasive neuroimaging modality measuring cortical haemodynamic responses. Achieved 72.9% classification accuracy under Leave-One-Subject-Out cross-validation.</div>
-        <div class="project-highlights">
-          <div class="highlight-item">SVM with RBF kernel — 72.9% accuracy (LOSO CV)</div>
-          <div class="highlight-item">HbO and HbR feature extraction: mean, variance, slope, peak amplitude</div>
-          <div class="highlight-item">Bandpass filtering, baseline correction, motion artefact removal</div>
-          <div class="highlight-item">KNN benchmarked against SVM for comparative analysis</div>
-        </div>
-        <div class="project-stack" style="margin-top:16px">
-          <span class="stack-tag">Python</span>
-          <span class="stack-tag">SVM</span>
-          <span class="stack-tag">KNN</span>
-          <span class="stack-tag">Signal Processing</span>
-          <span class="stack-tag">BCI</span>
-          <span class="stack-tag">fNIRS</span>
-          <span class="stack-tag">Scikit-learn</span>
-        </div>
-      </div>
-
-      <!-- Knowledge Chatbot -->
-      <div class="project-card" data-cat="building">
-        <span class="project-status status-building">In Progress</span>
-        <div class="project-title">Internal Knowledge Chatbot</div>
-        <div class="project-desc">Upload company docs, SOPs, and FAQs. Ask questions in plain English. Instant answers from your own data using RAG architecture and a local vector database.</div>
-        <div class="project-stack">
-          <span class="stack-tag">LangChain</span>
-          <span class="stack-tag">ChromaDB</span>
-          <span class="stack-tag">FastAPI</span>
-          <span class="stack-tag">Groq</span>
-        </div>
-      </div>
-
-      <!-- Automated Reports -->
-      <div class="project-card" data-cat="building">
-        <span class="project-status status-building">In Progress</span>
-        <div class="project-title">Automated Report Pipeline</div>
-        <div class="project-desc">Replace manually generated weekly reports with automated pipelines that pull data, summarise it with AI, and deliver formatted reports on a schedule — zero human effort required.</div>
+      <a href="#" class="project-card" data-cat="software">
+        <span class="project-status status-building">Coming Soon</span>
+        <div class="project-title">AI Vision Module</div>
+        <div class="project-desc">Real-time object detection pipeline optimized for embedded systems. Integrates with ESP32/Jetson boards for autonomous navigation and robotic vision applications.</div>
         <div class="project-stack">
           <span class="stack-tag">Python</span>
-          <span class="stack-tag">n8n</span>
-          <span class="stack-tag">LLaMA 3.3</span>
-          <span class="stack-tag">Pandas</span>
+          <span class="stack-tag">Computer Vision</span>
+          <span class="stack-tag">TensorFlow</span>
+          <span class="stack-tag">YOLO</span>
         </div>
-      </div>
+      </a>
+
+      <a href="#" class="project-card" data-cat="learning">
+        <span class="project-status status-building">Coming Soon</span>
+        <div class="project-title">Arduino Robotics Curriculum</div>
+        <div class="project-desc">Modular curriculum for teaching robotics from basics to intermediate control systems. Designed for classroom environments with project-based learning pathways.</div>
+        <div class="project-stack">
+          <span class="stack-tag">Education</span>
+          <span class="stack-tag">Arduino</span>
+          <span class="stack-tag">PBL</span>
+          <span class="stack-tag">STEM</span>
+        </div>
+      </a>
 
     </div>
   </section>
@@ -750,24 +561,14 @@
 
     <div class="projects-grid">
 
-      <!--
-        HOW TO ADD A NEW ARTICLE CARD:
-        1. Write the piece using /writing/template.html as your starting point.
-        2. Save it as /writing/your-article-slug.html
-        3. Copy one <a class="project-card"> block below, update the href,
-           status label, title, description, and tags.
-        4. Newest piece goes first.
-      -->
-
-      <a href="writing/autonomous-navigation-vehicle.html" class="project-card" data-cat="all">
-        <span class="project-status status-building">Draft — publishing soon</span>
-        <div class="project-title">Building a PID-Controlled Autonomous Navigation Vehicle</div>
-        <div class="project-desc">An Arduino/ESP32 build with real-time ultrasonic obstacle detection and PID-based path-following — from hardware setup through tuning the control loop, with the working code and what I'd change next time.</div>
+      <a href="writing/esp32-4wd-robot.html" class="project-card" data-cat="all">
+        <span class="project-status status-live">Published</span>
+        <div class="project-title">Building an ESP32 4WD Robot</div>
+        <div class="project-desc">From chassis to firmware: how to build a responsive, wireless-controlled 4WD robot platform using ESP32. Includes motor control strategies, obstacle detection, and a complete parts list.</div>
         <div class="project-stack">
-          <span class="stack-tag">Arduino</span>
           <span class="stack-tag">ESP32</span>
-          <span class="stack-tag">PID Control</span>
           <span class="stack-tag">Robotics</span>
+          <span class="stack-tag">Embedded Systems</span>
         </div>
       </a>
 
@@ -784,7 +585,25 @@
 
       <div class="exp-item">
         <div class="exp-meta">
-          <div class="exp-period">Feb 2024 — Present</div>
+          <div class="exp-period">Jul 2026 — Present</div>
+          <div class="exp-company">Pak-Turk Maarif International Schools and Colleges<br/>Islamabad</div>
+        </div>
+        <div class="exp-content">
+          <div class="exp-role">BTEC Coordinator &amp; Robotics Programme Designer</div>
+          <div class="exp-desc">Coordinate Pearson BTEC delivery across the Cambridge Section: unit selection, assessment scheduling, and quality oversight against Pearson's requirements. Write assignment briefs mapped to assessment criteria, build criteria coverage grids, and prepare centre files ahead of standards verification. Designed the school's robotics programme from scratch — scheme of work, lab setup, hardware (Arduino, ESP32, Raspberry Pi), and a progression path from first robot to Level 3. Mentor subject teachers so assessment quality holds consistently across the department.</div>
+          <div class="exp-tags">
+            <span class="exp-tag">Pearson BTEC</span>
+            <span class="exp-tag">Assessment Design</span>
+            <span class="exp-tag">Robotics Programme</span>
+            <span class="exp-tag">Arduino / ESP32 / RPi</span>
+            <span class="exp-tag">Teacher Mentoring</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="exp-item">
+        <div class="exp-meta">
+          <div class="exp-period">Feb 2024 — Jul 2026</div>
           <div class="exp-company">LearnOBots<br/>NSTP, Islamabad</div>
         </div>
         <div class="exp-content">
@@ -863,7 +682,7 @@
       <div class="contact-links">
         <a href="mailto:cassimhossain@gmail.com" class="btn-primary">Send an Email</a>
         <a href="https://linkedin.com/in/qasimushtaq" target="_blank" class="btn-ghost">LinkedIn</a>
-        <a href="https://ai-meetingsimplify.streamlit.app" target="_blank" class="btn-ghost">Live Demo</a>
+        <a href="https://github.com/cassimhossain" target="_blank" class="btn-ghost">GitHub</a>
       </div>
     </div>
   </section>
@@ -875,27 +694,37 @@
   </footer>
 
   <script>
-    // Custom cursor
-    const cursor = document.getElementById('cursor');
-    const ring   = document.getElementById('cursorRing');
-    let mx = 0, my = 0, rx = 0, ry = 0;
-    document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
-    function animateCursor() {
-      cursor.style.transform = `translate(${mx-4}px, ${my-4}px)`;
-      rx += (mx - rx) * 0.12;
-      ry += (my - ry) * 0.12;
-      ring.style.transform = `translate(${rx-16}px, ${ry-16}px)`;
-      requestAnimationFrame(animateCursor);
+    // Robot cursor following animation
+    const robotCursor = document.getElementById('robotCursor');
+    let mx = 0, my = 0, robotX = 0, robotY = 0;
+    let scale = 1, targetScale = 1;
+
+    document.addEventListener('mousemove', e => { 
+      mx = e.clientX; 
+      my = e.clientY; 
+    });
+    
+    function animateRobotCursor() {
+      // Robot follows cursor with smooth easing
+      robotX += (mx - robotX) * 0.15;
+      robotY += (my - robotY) * 0.15;
+      // Ease the hover pop so it doesn't snap
+      scale += (targetScale - scale) * 0.2;
+      robotCursor.style.transform = `translate(${robotX}px, ${robotY}px) scale(${scale})`;
+
+      requestAnimationFrame(animateRobotCursor);
     }
-    animateCursor();
+    animateRobotCursor();
+    
+    // Robot itself reacts on interactive elements (pops slightly + brighter glow)
     document.querySelectorAll('a, button').forEach(el => {
       el.addEventListener('mouseenter', () => {
-        ring.style.width = '48px'; ring.style.height = '48px';
-        ring.style.borderColor = 'rgba(96,165,250,0.7)';
+        targetScale = 1.3;
+        robotCursor.classList.add('is-active');
       });
       el.addEventListener('mouseleave', () => {
-        ring.style.width = '32px'; ring.style.height = '32px';
-        ring.style.borderColor = 'rgba(96,165,250,0.4)';
+        targetScale = 1;
+        robotCursor.classList.remove('is-active');
       });
     });
 
@@ -934,5 +763,3 @@
   </script>
 </body>
 </html>
-< ! - -   C a c h e   b u s t :   0 8 / 0 5 / 2 0 2 6   1 2 : 0 2 : 5 0   - - >  
- 
