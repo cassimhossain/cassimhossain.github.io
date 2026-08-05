@@ -31,6 +31,7 @@
       --dgrey:  #334155;
       --accent: #F59E0B;
       --green:  #10B981;
+      --purple: #C084FC;
     }
 
     html { scroll-behavior: smooth; }
@@ -272,6 +273,48 @@
     .status-live { background: rgba(16,185,129,0.2); color: var(--green); }
     .status-building { background: rgba(245,158,11,0.2); color: var(--accent); }
     .status-archived { background: rgba(148,163,184,0.2); color: var(--grey); }
+    .status-research { background: rgba(192,132,252,0.15); color: var(--purple); }
+
+    .project-card.featured {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px; align-items: center;
+      border-color: rgba(96,165,250,0.25);
+      background: linear-gradient(135deg, rgba(11,24,41,0.85), rgba(15,34,64,0.65));
+    }
+    .project-visual {
+      background: var(--navy3);
+      border: 1px solid rgba(96,165,250,0.12);
+      padding: 22px;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--grey);
+      line-height: 1.8;
+      align-self: stretch;
+    }
+    .project-visual .token-key   { color: #7DD3FC; }
+    .project-visual .token-str   { color: #86EFAC; }
+    .project-visual .token-num   { color: #FCA5A5; }
+    .project-visual .token-punct { color: #94A3B8; }
+
+    .project-highlights {
+      margin: 4px 0 0;
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .highlight-item {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem;
+      color: var(--grey);
+      padding-left: 14px;
+      position: relative;
+      line-height: 1.6;
+    }
+    .highlight-item::before {
+      content: '→';
+      position: absolute; left: 0;
+      color: var(--glow);
+    }
 
     .project-title {
       font-family: 'Syne', sans-serif;
@@ -399,6 +442,7 @@
       nav { padding: 16px 24px; }
       section { padding: 80px 24px; }
       .projects-grid { grid-template-columns: 1fr; }
+      .project-card.featured { grid-template-columns: 1fr; }
       .exp-item { grid-template-columns: 1fr; }
       .hero { padding: 100px 24px 60px; }
       .contact-links { flex-direction: column; }
@@ -508,10 +552,38 @@
       <button class="filter-btn active" data-filter="all">All</button>
       <button class="filter-btn" data-filter="hardware">Hardware</button>
       <button class="filter-btn" data-filter="software">Software</button>
+      <button class="filter-btn" data-filter="research">Research</button>
       <button class="filter-btn" data-filter="learning">Learning</button>
     </div>
 
     <div class="projects-grid">
+
+      <a href="https://ai-meetingsimplify.streamlit.app" target="_blank" class="project-card featured" data-cat="software">
+        <div>
+          <span class="project-status status-live">Live in Production</span>
+          <div class="project-title">AI Meeting Summarizer</div>
+          <div class="project-desc">Upload any meeting audio or video. Transcribes with local Whisper, sends transcript to LLaMA 3.3 70B via Groq, and extracts action items, decisions, owners, due dates, and open questions — then generates a downloadable PDF report. 100% free stack. Audio never leaves your machine.</div>
+          <div class="project-stack">
+            <span class="stack-tag">Python</span>
+            <span class="stack-tag">Whisper</span>
+            <span class="stack-tag">Groq</span>
+            <span class="stack-tag">LLaMA 3.3 70B</span>
+            <span class="stack-tag">Streamlit</span>
+            <span class="stack-tag">ReportLab</span>
+            <span class="stack-tag">FFmpeg</span>
+          </div>
+        </div>
+        <div class="project-visual">
+          <div><span class="token-punct">{</span></div>
+          <div>&nbsp;&nbsp;<span class="token-key">"meeting_title"</span><span class="token-punct">:</span> <span class="token-str">"Blueprint AI Weekly Sync"</span><span class="token-punct">,</span></div>
+          <div>&nbsp;&nbsp;<span class="token-key">"action_items"</span><span class="token-punct">:</span> <span class="token-num">5</span><span class="token-punct">,</span></div>
+          <div>&nbsp;&nbsp;<span class="token-key">"decisions"</span><span class="token-punct">:</span> <span class="token-num">2</span><span class="token-punct">,</span></div>
+          <div>&nbsp;&nbsp;<span class="token-key">"open_questions"</span><span class="token-punct">:</span> <span class="token-num">1</span><span class="token-punct">,</span></div>
+          <div>&nbsp;&nbsp;<span class="token-key">"pdf_generated"</span><span class="token-punct">:</span> <span class="token-str">"true"</span><span class="token-punct">,</span></div>
+          <div>&nbsp;&nbsp;<span class="token-key">"model"</span><span class="token-punct">:</span> <span class="token-str">"llama-3.3-70b-versatile"</span></div>
+          <div><span class="token-punct">}</span></div>
+        </div>
+      </a>
 
       <a href="writing/esp32-4wd-robot.html" class="project-card" data-cat="hardware">
         <span class="project-status status-live">Live — in production</span>
@@ -548,6 +620,70 @@
           <span class="stack-tag">STEM</span>
         </div>
       </a>
+
+      <div class="project-card" data-cat="research">
+        <span class="project-status status-research">MSc Research — NUST</span>
+        <div class="project-title">Neural Network Autograd Engine</div>
+        <div class="project-desc">Built a complete automatic differentiation engine in pure Python — no libraries, no shortcuts. Implements the full forward and backward pass of a computational graph from scalar Value nodes through to a working multi-layer perceptron trained with gradient descent.</div>
+        <div class="project-highlights">
+          <div class="highlight-item">Computational graph construction &amp; topological sorting</div>
+          <div class="highlight-item">Chain rule gradient accumulation through backward passes</div>
+          <div class="highlight-item">tanh, ReLU, sigmoid with analytical gradients</div>
+          <div class="highlight-item">Neuron, Layer, and MLP architecture from scratch</div>
+        </div>
+        <div class="project-stack" style="margin-top:16px">
+          <span class="stack-tag">Python</span>
+          <span class="stack-tag">Deep Learning</span>
+          <span class="stack-tag">Backpropagation</span>
+          <span class="stack-tag">Autograd</span>
+          <span class="stack-tag">Neural Networks</span>
+        </div>
+      </div>
+
+      <div class="project-card" data-cat="research">
+        <span class="project-status status-research">MSc Research — NUST</span>
+        <div class="project-title">fNIRS Motor Activity Classification</div>
+        <div class="project-desc">ML pipeline to classify hand-grip motor activity versus rest states using functional near-infrared spectroscopy — a non-invasive neuroimaging modality measuring cortical haemodynamic responses. Achieved 72.9% classification accuracy under Leave-One-Subject-Out cross-validation.</div>
+        <div class="project-highlights">
+          <div class="highlight-item">SVM with RBF kernel — 72.9% accuracy (LOSO CV)</div>
+          <div class="highlight-item">HbO and HbR feature extraction: mean, variance, slope, peak amplitude</div>
+          <div class="highlight-item">Bandpass filtering, baseline correction, motion artefact removal</div>
+          <div class="highlight-item">KNN benchmarked against SVM for comparative analysis</div>
+        </div>
+        <div class="project-stack" style="margin-top:16px">
+          <span class="stack-tag">Python</span>
+          <span class="stack-tag">SVM</span>
+          <span class="stack-tag">KNN</span>
+          <span class="stack-tag">Signal Processing</span>
+          <span class="stack-tag">BCI</span>
+          <span class="stack-tag">fNIRS</span>
+          <span class="stack-tag">Scikit-learn</span>
+        </div>
+      </div>
+
+      <div class="project-card" data-cat="software">
+        <span class="project-status status-building">In Progress</span>
+        <div class="project-title">Internal Knowledge Chatbot</div>
+        <div class="project-desc">Upload company docs, SOPs, and FAQs. Ask questions in plain English. Instant answers from your own data using RAG architecture and a local vector database.</div>
+        <div class="project-stack">
+          <span class="stack-tag">LangChain</span>
+          <span class="stack-tag">ChromaDB</span>
+          <span class="stack-tag">FastAPI</span>
+          <span class="stack-tag">Groq</span>
+        </div>
+      </div>
+
+      <div class="project-card" data-cat="software">
+        <span class="project-status status-building">In Progress</span>
+        <div class="project-title">Automated Report Pipeline</div>
+        <div class="project-desc">Replace manually generated weekly reports with automated pipelines that pull data, summarise it with AI, and deliver formatted reports on a schedule — zero human effort required.</div>
+        <div class="project-stack">
+          <span class="stack-tag">Python</span>
+          <span class="stack-tag">n8n</span>
+          <span class="stack-tag">LLaMA 3.3</span>
+          <span class="stack-tag">Pandas</span>
+        </div>
+      </div>
 
     </div>
   </section>
