@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <title>Building a WiFi-Controlled ESP32 4WD Robot Car - Qasim Mushtaq</title>
+  <meta name="description" content="A hands-on build log for a tank-steered ESP32 rover: wiring the L298N driver, writing the firmware, and the failure modes that came with both." />
+  <meta property="og:title" content="Building a WiFi-Controlled ESP32 4WD Robot Car" />
+  <meta property="og:description" content="A hands-on build log for a tank-steered ESP32 rover - wiring, firmware, and the mistakes worth skipping." />
+  <meta property="og:type" content="article" />
+
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23060E1F'/%3E%3Ctext x='50' y='68' font-size='58' font-family='Georgia,serif' font-weight='bold' fill='%2360A5FA' text-anchor='middle'%3EQ%3C/text%3E%3C/svg%3E" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ── Palette: grounded in the subject - PCB white, copper trace, signal blue ── */
+    :root {
+      --paper:   #FFFFFF;
+      --paper2:  #F6F8FB;   /* card / code background */
+      --mist:    #EEF1F7;   /* table stripes, diagram bg */
+      --ink:     #10131A;   /* headings, strong text */
+      --slate:   #4B5568;   /* body text */
+      --grey:    #7C8AA0;   /* meta, captions */
+      --border:  rgba(36,85,230,0.16);
+      --signal:  #2455E6;   /* primary accent - "signal wire" blue */
+      --copper:  #B5651D;   /* callouts - solder/copper */
+      --green:   #1E8E5A;   /* positive / troubleshooting fixes */
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--paper);
+      color: var(--ink);
+      font-family: 'DM Sans', sans-serif;
+      line-height: 1.6;
+    }
+
+    .topbar { max-width: 760px; margin: 0 auto; padding: 32px 24px 0; }
+    .back-link {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.8rem; letter-spacing: 0.05em;
+      color: var(--grey); text-decoration: none;
+    }
+    .back-link:hover { color: var(--signal); }
+
+    article { max-width: 760px; margin: 0 auto; padding: 40px 24px 100px; }
+
+    .article-tag {
+      display: inline-block;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--signal);
+      border: 1px solid var(--border);
+      padding: 5px 12px;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: clamp(1.8rem, 4vw, 2.6rem);
+      line-height: 1.15;
+      color: var(--ink);
+      margin-bottom: 16px;
+    }
+
+    .dek { font-size: 1.1rem; color: var(--slate); max-width: 620px; margin-bottom: 20px; }
+
+    .meta-line {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.78rem;
+      color: var(--grey);
+      margin-bottom: 44px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* Signature element: a small "via" pad marks every h2, like a pad on a PCB silkscreen */
+    article h2 {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 1.4rem;
+      color: var(--ink);
+      margin: 48px 0 18px;
+      position: relative;
+      padding-left: 24px;
+    }
+    article h2::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0.3em;
+      width: 11px; height: 11px;
+      border-radius: 50%;
+      background: var(--paper);
+      border: 2.5px solid var(--signal);
+    }
+    article h3 {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: var(--signal);
+      margin: 28px 0 12px;
+    }
+    article p { font-size: 1rem; color: var(--slate); margin-bottom: 18px; }
+    article ul, article ol { color: var(--slate); margin: 0 0 18px 22px; }
+    article li { margin-bottom: 8px; }
+    article strong { color: var(--ink); font-weight: 600; }
+    article a { color: var(--signal); }
+
+    pre {
+      background: var(--paper2);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--signal);
+      padding: 20px;
+      overflow-x: auto;
+      margin: 24px 0;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.83rem;
+      line-height: 1.65;
+      color: var(--ink);
+    }
+    code {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.88em;
+      background: var(--paper2);
+      padding: 2px 6px;
+      color: var(--ink);
+      border-radius: 2px;
+    }
+    pre code { background: none; padding: 0; }
+
+    .callout {
+      background: var(--paper2);
+      border-left: 3px solid var(--copper);
+      padding: 16px 20px;
+      margin: 24px 0;
+      font-size: 0.92rem;
+      color: var(--slate);
+    }
+    .callout strong { color: var(--copper); }
+
+    /* Tables - BOM & troubleshooting */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 22px 0 28px;
+      font-size: 0.9rem;
+    }
+    thead th {
+      text-align: left;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--grey);
+      padding: 10px 14px;
+      border-bottom: 2px solid var(--ink);
+    }
+    tbody td {
+      text-align: left;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      color: var(--slate);
+      vertical-align: top;
+    }
+    tbody tr:hover { background: var(--mist); }
+    tbody td:first-child { color: var(--ink); font-weight: 500; }
+    td.fix { color: var(--green); font-weight: 500; }
+
+    /* System architecture diagram - styled like signal traces between components */
+    .diagram {
+      display: flex;
+      align-items: center;
+      flex-wrap: nowrap;
+      gap: 0;
+      margin: 26px 0;
+      padding: 26px 18px;
+      background: var(--mist);
+      border: 1px solid var(--border);
+      overflow-x: auto;
+    }
+    .diagram .node {
+      flex: 0 0 auto;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      background: var(--paper);
+      border: 1.5px solid var(--signal);
+      padding: 10px 12px;
+      color: var(--ink);
+      white-space: nowrap;
+      text-align: center;
+    }
+    .diagram .trace {
+      flex: 1 1 32px;
+      min-width: 24px;
+      height: 2px;
+      background: var(--signal);
+      position: relative;
+      margin: 0 4px;
+    }
+    .diagram .trace::after {
+      content: '';
+      position: absolute;
+      right: -1px; top: -3px;
+      width: 0; height: 0;
+      border-left: 6px solid var(--signal);
+      border-top: 4px solid transparent;
+      border-bottom: 4px solid transparent;
+    }
+    @media (max-width: 640px) {
+      .diagram { flex-direction: column; align-items: stretch; }
+      .diagram .node { width: 100%; }
+      .diagram .trace { width: 2px; height: 20px; margin: 4px auto; }
+      .diagram .trace::after {
+        right: -3px; top: auto; bottom: -1px;
+        border-left: 4px solid transparent;
+        border-right: 4px solid transparent;
+        border-top: 6px solid var(--signal);
+      }
+    }
+
+    figure { margin: 28px 0; }
+    figure img { width: 100%; display: block; border: 1px solid var(--border); }
+    figcaption {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--grey);
+      margin-top: 8px;
+      text-align: center;
+    }
+
+    .author-box {
+      margin-top: 60px;
+      padding: 28px;
+      background: var(--paper2);
+      border: 1px solid var(--border);
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .author-box .name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem; color: var(--ink); }
+    .author-box p { font-size: 0.88rem; color: var(--slate); margin: 0; }
+    .author-links { font-family: 'DM Mono', monospace; font-size: 0.8rem; }
+    .author-links a { color: var(--signal); margin-right: 16px; text-decoration: none; }
+    .author-links a:hover { text-decoration: underline; }
+
+    @media (max-width: 600px) { article { padding: 32px 20px 80px; } }
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <a href="../index.html#writing" class="back-link">&larr; back to cassimhossain.github.io</a>
+  </div>
+
+  <article>
+
+    <span class="article-tag">Robotics &middot; Embedded Systems &middot; ESP32</span>
+
+    <h1>Building a WiFi-Controlled 4WD Robot Car With an ESP32</h1>
+    <p class="dek">
+      A full build log - hardware, wiring, firmware, and the mistakes worth skipping - for a tank-steered rover you drive from your phone over Wi-Fi.
+    </p>
+
+    <div class="meta-line">
+      Qasim Mushtaq &nbsp;&middot;&nbsp; <span id="pub-date">August 07, 2026</span> &nbsp;&middot;&nbsp; ~11 min read
+    </div>
+
+    <figure>
+      <img src="https://raw.githubusercontent.com/cassimhossain/esp32-4wd-wifi-car/master/images/car-driving.png" alt="ESP32 4WD car driving across a wooden floor, controlled from a phone">
+      <figcaption>[ Esp32 Car Image ]</figcaption>
+    </figure>
+
+    <p>
+      Most "smart car" tutorials start with the Arduino Uno plus a separate HC-05 Bluetooth module, which works, but you're stacking three boards to get one radio. The ESP32 does the whole job on a single chip: Wi-Fi and Bluetooth built in, two cores instead of one, and enough GPIO to drive a full H-bridge without running out of pins halfway through wiring. The dual cores matter more than they sound like they should - the Wi-Fi stack runs on its own core by default, so the radio doesn't compete with your motor-control loop for CPU time the way it would on a single-core board.
+    </p>
+    <p>
+      This is a tank-steered 4WD rover: four DC gear motors, an L298N driver, and an ESP32 hosting its own Wi-Fi access point so you can drive it straight from a phone browser - no home router, no app store, no pairing dance. Here's everything that went into it, in the order you'll actually need it.
+    </p>
+
+    <ul>
+      <li><strong>Phone-controlled over Wi-Fi</strong> - the ESP32 broadcasts its own network; connect and drive from any browser.</li>
+      <li><strong>Tank-style steering</strong> - left and right motor pairs are driven independently for forward, reverse, and in-place pivot turns.</li>
+      <li><strong>Rechargeable 2-cell power system</strong> - a pair of 18650 cells feeds the motors directly and the logic board through the driver's onboard regulator.</li>
+      <li><strong>No extra radio hardware</strong> - Wi-Fi and Bluetooth are both on-chip, so there's nothing else to wire up for control.</li>
+    </ul>
+
+    <h2>Before you start</h2>
+    <p>
+      You don't need a robotics background, but a few gaps will slow you down more than others. You should be comfortable with:
+    </p>
+    <ul>
+      <li>Basic C++ syntax - functions, variables, conditionals. You're not writing anything exotic, but you are writing real C++, not blocks.</li>
+      <li>Soldering headers and simple joints. You can get away with a breadboard for the electronics stage, but permanent wiring on a moving chassis needs solder eventually - vibration works crimp connections loose.</li>
+      <li>Basic voltage and current concepts - enough to understand why a motor pulling 2A can't be powered from a GPIO pin, and why that's what the driver board is for.</li>
+    </ul>
+    <p>
+      On the software side you'll need the <strong>Arduino IDE</strong> (2.x) with the ESP32 board package installed, or PlatformIO if you'd rather skip the IDE entirely - the code in this guide works with either. You'll also want a phone or laptop to test the Wi-Fi control page once it's running; no dedicated app required.
+    </p>
+
+    <h2>Bill of materials</h2>
+    <p>
+      Nothing here is exotic - this is the same parts list you'll find in most ESP32 rover kits, and everything is available individually if you'd rather not buy a bundle.
+    </p>
+    <table>
+      <thead>
+        <tr><th>Component</th><th>Qty</th><th>Purpose</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>ESP32 Dev Board</td><td>1</td><td>Main brain and wireless control hub.</td></tr>
+        <tr><td>L298N Motor Driver</td><td>1</td><td>Drives the high-current DC motors; the ESP32's GPIO pins can't push motor current directly.</td></tr>
+        <tr><td>DC Gear Motors (with wheels)</td><td>4</td><td>Physical locomotion - two per side, wired in parallel.</td></tr>
+        <tr><td>4WD Robot Chassis</td><td>1</td><td>Structural frame holding everything together.</td></tr>
+        <tr><td>18650 Li-ion Batteries</td><td>2</td><td>Supplies 7.4V (2S) to the motors and, via the driver's regulator, the ESP32.</td></tr>
+        <tr><td>18650 Battery Holder</td><td>1</td><td>Houses the cells and exposes a clean power lead.</td></tr>
+        <tr><td>Jumper Wires (M-M, M-F)</td><td>1 set</td><td>Signal connections between the ESP32 and the driver.</td></tr>
+      </tbody>
+    </table>
+    <p>
+      Two things not on that list that you'll want anyway: an inline power switch (soldering the battery leads directly to the driver means unplugging a connector every time you want it off, which gets old fast) and a dedicated 18650 charger if you don't already have one - these cells shouldn't be charged through the car's own circuitry.
+    </p>
+
+    <h2>System architecture</h2>
+    <p>
+      Before any wiring, it helps to have the signal path in your head. A command starts on your phone and ends as current through a motor winding - everything in between is translation:
+    </p>
+    <div class="diagram">
+      <div class="node">Phone / Browser</div>
+      <div class="trace"></div>
+      <div class="node">Wi-Fi (2.4GHz)</div>
+      <div class="trace"></div>
+      <div class="node">ESP32</div>
+      <div class="trace"></div>
+      <div class="node">L298N Driver</div>
+      <div class="trace"></div>
+      <div class="node">DC Motors ×4</div>
+    </div>
+    <p>
+      The ESP32 hosts its own access point, so the phone connects directly to the car rather than to a home router - that keeps the whole thing usable in a garage, a park, or anywhere else with no Wi-Fi infrastructure. On button press, the phone's browser fires a plain HTTP request; the ESP32 turns that into GPIO logic levels; the L298N turns logic levels into the current a motor can actually use.
+    </p>
+    <p>
+      <strong>Power distribution</strong> is simpler than it looks. The 7.4V pack feeds the L298N's power input directly - that's what the motors run on. The ESP32, in turn, is powered from the driver's onboard 5V regulator output, not from the battery directly. This only works if that regulator's enable jumper is in place, and it's rated for logic-level current only - don't try to run anything current-hungry off it. If your pack is ever above 12V, remove that jumper and feed the ESP32's 5V pin from a separate regulator instead; the onboard one isn't built for that.
+    </p>
+
+    <h2>Building it: chassis, mounting, and wiring</h2>
+    <p>
+      Order matters here more than it seems like it should - wiring the motors before the chassis is bolted down means re-routing wires around brackets you've already tightened. Do it in this order:
+    </p>
+
+    <h3>1. Chassis assembly</h3>
+    <p>
+      Mount the four gear motors to the chassis rails first, then attach the wheels. Route each motor's wire leads out toward the center of the chassis before you tighten anything down - you want them accessible, not trapped under a bracket. Secure the battery holder last, somewhere central for weight balance; a rear-heavy car steers noticeably worse.
+    </p>
+
+    <h3>2. Mounting the electronics</h3>
+    <p>
+      Place the ESP32 and L298N where their headers are reachable without disassembling the chassis. If your chassis plate is metal, use standoffs or a layer of double-sided foam tape under both boards - a bare solder joint bridging to a metal frame is a short waiting to happen, and it's the kind of fault that's miserable to trace after the fact.
+    </p>
+
+    <h3>3. Wiring the power delivery</h3>
+    <p>
+      Connect the battery holder's leads to the L298N's power terminals, matching polarity - reversed polarity here doesn't just fail to work, it can damage the driver instantly. <strong>Keep the power switch off, or the battery disconnected, for this entire step.</strong> A stray strand of wire touching the wrong terminal while the pack is live is the single most common way to lose a driver board.
+    </p>
+
+    <h3>4. Wiring the motors</h3>
+    <p>
+      Wire both left-side motors in parallel to OUT1/OUT2, and both right-side motors in parallel to OUT3/OUT4. This is what turns two logical "sides" into tank steering - the L298N doesn't know or care that there are two motors on each output, it just sees load. If your motors ever spin the wrong way relative to each other once everything's powered, it's this wiring you'll revisit, not the code.
+    </p>
+
+    <h3>5. Connecting the ESP32 to the driver</h3>
+    <p>
+      This is the logic layer - six GPIO pins carrying direction and speed signals, no motor current anywhere near the ESP32 itself. Here's the mapping this build uses:
+    </p>
+    <table>
+      <thead><tr><th>ESP32 GPIO</th><th>L298N Pin</th><th>Function</th></tr></thead>
+      <tbody>
+        <tr><td>GPIO 27</td><td>IN1</td><td>Left motors - direction A</td></tr>
+        <tr><td>GPIO 26</td><td>IN2</td><td>Left motors - direction B</td></tr>
+        <tr><td>GPIO 25</td><td>IN3</td><td>Right motors - direction A</td></tr>
+        <tr><td>GPIO 33</td><td>IN4</td><td>Right motors - direction B</td></tr>
+        <tr><td>GPIO 14</td><td>ENA</td><td>Left side speed (PWM)</td></tr>
+        <tr><td>GPIO 32</td><td>ENB</td><td>Right side speed (PWM)</td></tr>
+      </tbody>
+    </table>
+    <p>
+      Those pins aren't arbitrary - GPIO 0, 2, 5, 12, and 15 are strapping pins that influence how the ESP32 boots, and pulling one of them the wrong way at power-on can stop the board from booting at all. Everything above avoids that set. One more thing worth knowing before you power up: the L298N's logic inputs are usually happy reading the ESP32's 3.3V as a valid HIGH, but it's board-dependent - if you get direction that's inconsistent or flips at random, that's the first thing to suspect, and a cheap logic-level shifter fixes it permanently.
+    </p>
+    <figure>
+      <img src="https://raw.githubusercontent.com/cassimhossain/esp32-4wd-wifi-car/master/images/wiring-diagram.png" alt="Fritzing wiring diagram: ESP32 to L298N motor driver">
+      <figcaption>[ Circuit Diagra: ESP32-to-L298N wiring ]</figcaption>
+    </figure>
+
+    <h2>Firmware: from GPIO to Wi-Fi control</h2>
+
+    <h3>Environment setup</h3>
+    <p>
+      In the Arduino IDE, add the ESP32 board package under <strong>File → Preferences → Additional Board Manager URLs</strong>:
+    </p>
+    <pre><code>https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json</code></pre>
+    <p>
+      Then install "esp32" from <strong>Tools → Board → Boards Manager</strong>, and select your specific board (most Dev Kit v1 boards work correctly under the generic "ESP32 Dev Module" entry).
+    </p>
+
+    <h3>Libraries</h3>
+    <p>
+      <code>WiFi.h</code> ships with the ESP32 core, so there's nothing to install there. For the web server, this build uses <strong>ESPAsyncWebServer</strong>, which handles requests off the main loop instead of blocking it - install it from the Library Manager, and make sure its dependency, <strong>AsyncTCP</strong>, gets installed alongside it. Missing that second library is the most common reason this won't compile on a first attempt.
+    </p>
+
+    <h3>Motor control</h3>
+    <p>
+      The motor functions are deliberately dumb - direction pins set HIGH/LOW, speed pins driven with PWM. Everything smarter (turning, timing, safety cutoffs) is built on top of these:
+    </p>
+    <pre><code>// ---- Motor driver pins ----
+const int IN1 = 27;   // Left motors  - direction A
+const int IN2 = 26;   // Left motors  - direction B
+const int IN3 = 25;   // Right motors - direction A
+const int IN4 = 33;   // Right motors - direction B
+const int ENA = 14;   // Left motors  - speed (PWM)
+const int ENB = 32;   // Right motors - speed (PWM)
+
+void motorsInit() {
+  pinMode(IN1, OUTPUT);
+  pinMode(IN2, OUTPUT);
+  pinMode(IN3, OUTPUT);
+  pinMode(IN4, OUTPUT);
+  pinMode(ENA, OUTPUT);
+  pinMode(ENB, OUTPUT);
+}
+
+void setLeftMotor(bool forward, int speed) {
+  digitalWrite(IN1, forward);
+  digitalWrite(IN2, !forward);
+  analogWrite(ENA, speed);   // 0-255
+}
+
+void setRightMotor(bool forward, int speed) {
+  digitalWrite(IN3, forward);
+  digitalWrite(IN4, !forward);
+  analogWrite(ENB, speed);
+}
+
+void moveForward(int speed)  { setLeftMotor(true,  speed); setRightMotor(true,  speed); }
+void moveBackward(int speed) { setLeftMotor(false, speed); setRightMotor(false, speed); }
+void turnLeft(int speed)     { setLeftMotor(false, speed); setRightMotor(true,  speed); } // pivot left
+void turnRight(int speed)    { setLeftMotor(true,  speed); setRightMotor(false, speed); } // pivot right
+void stopCar()                { analogWrite(ENA, 0); analogWrite(ENB, 0); }</code></pre>
+    <p>
+      Note there's no default argument on <code>speed</code> - the Arduino build system auto-generates function prototypes from your <code>.ino</code> file, and if you declare a default value directly on the definition, it sometimes duplicates that default into the generated prototype and fails to compile. Passing the speed explicitly every time sidesteps the whole problem. Also worth knowing: on newer releases of the ESP32 Arduino core, <code>analogWrite()</code> works natively; on older core versions (2.x and earlier) you'll need <code>ledcAttach()</code>/<code>ledcWrite()</code> instead - check your board package version if this line doesn't compile as-is.
+    </p>
+
+    <h3>Wireless control</h3>
+    <p>
+      Rather than joining your home network, the ESP32 broadcasts its own access point - connect your phone to it directly and the car is reachable at a fixed address, no router or app required:
+    </p>
+    <pre><code>#include &lt;WiFi.h&gt;
+#include &lt;ESPAsyncWebServer.h&gt;
+
+const char* AP_SSID = "ESP32-4WD-Car";
+const char* AP_PASS = "drivemebot";   // 8+ characters - change this
+
+AsyncWebServer server(80);
+unsigned long lastCommandMs = 0;
+const unsigned long COMMAND_TIMEOUT_MS = 500;
+
+const char controlPage[] PROGMEM = R"rawliteral(
+&lt;!DOCTYPE html&gt;&lt;html&gt;&lt;body style="font-family:sans-serif;text-align:center"&gt;
+&lt;h2&gt;ESP32 4WD Car&lt;/h2&gt;
+&lt;button onclick="fetch('/forward')"&gt;Forward&lt;/button&gt;&lt;br&gt;&lt;br&gt;
+&lt;button onclick="fetch('/left')"&gt;Left&lt;/button&gt;
+&lt;button onclick="fetch('/stop')"&gt;Stop&lt;/button&gt;
+&lt;button onclick="fetch('/right')"&gt;Right&lt;/button&gt;&lt;br&gt;&lt;br&gt;
+&lt;button onclick="fetch('/back')"&gt;Back&lt;/button&gt;
+&lt;/body&gt;&lt;/html&gt;
+)rawliteral";
+
+void setup() {
+  motorsInit();
+  stopCar();
+
+  WiFi.softAP(AP_SSID, AP_PASS);   // car reachable at 192.168.4.1
+
+  server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send_P(200, "text/html", controlPage);
+  });
+  server.on("/forward", HTTP_GET, [](AsyncWebServerRequest *r){ lastCommandMs = millis(); moveForward(200);  r->send(200); });
+  server.on("/back",    HTTP_GET, [](AsyncWebServerRequest *r){ lastCommandMs = millis(); moveBackward(200); r->send(200); });
+  server.on("/left",    HTTP_GET, [](AsyncWebServerRequest *r){ lastCommandMs = millis(); turnLeft(200);     r->send(200); });
+  server.on("/right",   HTTP_GET, [](AsyncWebServerRequest *r){ lastCommandMs = millis(); turnRight(200);    r->send(200); });
+  server.on("/stop",    HTTP_GET, [](AsyncWebServerRequest *r){ stopCar();                                    r->send(200); });
+
+  server.begin();
+}
+
+void loop() {
+  // Safety cutoff: if no command arrives for COMMAND_TIMEOUT_MS,
+  // stop the motors. Without this, walking out of Wi-Fi range
+  // mid-turn leaves the car driving itself indefinitely.
+  if (millis() - lastCommandMs > COMMAND_TIMEOUT_MS) {
+    stopCar();
+  }
+}</code></pre>
+    <div class="callout">
+      <strong>What went wrong first:</strong> the earliest version of this sketch had no timeout logic - the car kept executing the last command it received until a new one arrived. Walk out of Wi-Fi range mid-turn, and it just keeps turning. The fix is the <code>lastCommandMs</code> check above: cheap, easy to forget, and the difference between a toy and something that drives itself off a table.
+    </div>
+    <p>
+      The full, commented sketch (this file plus the small housekeeping bits left out here for length) is in the repo linked at the end of this article.
+    </p>
+
+    <h2>First power-up: testing and calibration</h2>
+    <p>
+      Before the first boot with wheels touching the ground, put the car up on a block so all four wheels spin freely in the air. If a direction is wired backwards, you want to find out with the car stationary, not watching it drive off the edge of a table.
+    </p>
+    <table>
+      <thead><tr><th>Symptom</th><th>Fix</th></tr></thead>
+      <tbody>
+        <tr><td>Wheels on one side spin opposite to the other</td><td class="fix">Swap that side's two motor leads at the driver's output terminals.</td></tr>
+        <tr><td>ESP32 keeps restarting under load</td><td class="fix">Almost always a brownout - check battery voltage under load, not at rest; a sagging 2S pack can dip below what the regulator needs.</td></tr>
+        <tr><td>Car doesn't respond to turn commands</td><td class="fix">Confirm ENA/ENB are actually wired to PWM-capable GPIOs and that the driver's 5V-EN jumper wasn't knocked loose during assembly.</td></tr>
+        <tr><td>Phone can't find the car's network</td><td class="fix">Confirm <code>WiFi.softAP()</code> returned true in Serial output, and that your phone's Wi-Fi (not mobile data) is what's browsing to 192.168.4.1.</td></tr>
+      </tbody>
+    </table>
+    <p>
+      Once direction and response are confirmed, set the car down and repeat the same checks under real load - a motor that turns freely in the air can still stall under the chassis's weight if the battery's sagging more than expected.
+    </p>
+
+    <h2>Where to take it from here</h2>
+    <p>
+      Once the base platform drives reliably, the next upgrades are mostly a matter of what you bolt on:
+    </p>
+    <ul>
+      <li><strong>Obstacle avoidance</strong> - an HC-SR04 ultrasonic sensor on the front, polled in the main loop, is enough to add a basic stop-before-collision behavior.</li>
+      <li><strong>FPV driving</strong> - swap in an ESP32-CAM and stream video to the same control page instead of driving blind.</li>
+      <li><strong>Closed-loop control</strong> - add wheel encoders and PID speed control if you want the car to actually go straight instead of drifting toward whichever side has the slightly stronger motor.</li>
+    </ul>
+
+    <p>
+      Full code: <a href="https://github.com/cassimhossain/esp32-4wd-wifi-car" target="_blank">github.com/cassimhossain/esp32-4wd-wifi-car</a>
+    </p>
+
+    <div class="author-box">
+      <div class="name">Qasim Mushtaq</div>
+      <p>Robotics &amp; AI Engineer. I build the hardware I write about.</p>
+      <div class="author-links">
+        <a href="https://cassimhossain.github.io">Portfolio</a>
+        <a href="https://linkedin.com/in/qasimushtaq" target="_blank">LinkedIn</a>
+        <a href="mailto:cassimhossain@gmail.com">Email</a>
+      </div>
+    </div>
+
+  </article>
+
+</body>
+</html>
